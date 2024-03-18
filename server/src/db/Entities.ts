@@ -1,89 +1,69 @@
+//src/db/Entities.ts
 
 import "reflect-metadata";
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
 
 @Entity()
 class User extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  UserID: number;
+  @PrimaryGeneratedColumn({name:'userid'})
+  UserID!: number;
 
-  @Column({ length: 50, unique: true })
-  Username: string;
+  @Column({name:'username', length: 50, unique: true })
+  Username!: string;
 
-  @Column({ length: 100, unique: true })
-  Email: string;
+  @Column({name:'email', length: 100, unique: true })
+  Email!: string;
 
-  @Column({ length: 20, nullable: true })
-  Tel: string;
+  @Column({name:'tel', length: 20, nullable: true })
+  Tel!: string;
 
-  @Column({ default: 0 })
-  Parties: number;
+  @Column({name:'parties', default: 0 })
+  Parties!: number;
 
-  @Column({ length: 100 })
-  Psswrd: string;
+  @Column({name:'psswrd', length: 100 })
+  Psswrd!: string;
 
-  @Column()
-  AddressID: number;
+  @OneToMany(() => Participants, participants => participants.user)
+  participants!: Participants[];
+
+  @OneToMany(() => Likes, likes => likes.user)
+  likes!: Likes[];
 
   @OneToMany(() => PartyUser, partyUser => partyUser.user)
-  parties: PartyUser[];
+  parties!: PartyUser[];
 
-  @OneToMany(() => Post, post => post.user)
-  posts: Post[];
+  @OneToMany(() => Posts, posts => posts.user)
+  posts!: Posts[];
 
-  @OneToMany(() => Comment, comment => comment.user)
-  comments: Comment[];
+  @OneToMany(() => Comments, comments => comments.user)
+  comments!: Comments[];
 
-  @OneToMany(() => Message, message => message.sender)
-  messages: Message[];
-
-  @ManyToOne(() => Address, address => address.user)
-  @JoinColumn({ name: 'AddressID' })
-  address: Address;
+  @OneToMany(() => Messages, messages => messages.sender)
+  messages!: Messages[];
 
   @OneToMany(() => Friendship, friendship => friendship.user1)
-  friendships1: Friendship[];
+  friendships1!: Friendship[];
 
   @OneToMany(() => Friendship, friendship => friendship.user2)
-  friendships2: Friendship[];
+  friendships2!: Friendship[];
 }
 
-@Entity()
-class Address {
-  @PrimaryGeneratedColumn()
-  AddressID: number;
-
-  @Column({ length: 255, nullable: true })
-  Street: string;
-
-  @Column({ length: 100, nullable: true })
-  City: string;
-
-  @Column({ length: 50, nullable: true })
-  State: string;
-
-  @Column({ length: 20, nullable: true })
-  PostalCode: string;
-
-  @OneToMany(() => User, user => user.address)
-  user: User;
-}
 
 @Entity()
 class Party {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({name:'partyid'})
   PartyID: number;
 
-  @Column({ length: 255 })
+  @Column({name:'occasion', length: 255 })
   Occasion: string;
 
-  @Column()
+  @Column({name:'datestart'})
   DateStart: Date;
 
-  @Column()
+  @Column({name:'dateend'})
   DateEnd: Date;
 
-  @Column({ length: 255, nullable: true })
+  @Column({name:'messaging', length: 255, nullable: true })
   Messaging: string;
 
   @OneToMany(() => PartyUser, partyUser => partyUser.party)
@@ -94,132 +74,138 @@ class Party {
 }
 
 @Entity()
-class PartyUser {
-  @ManyToOne(() => Party, party => party.users, { primary: true })
-  @JoinColumn({ name: 'PartyID' })
+class PartyUser{
+  @PrimaryGeneratedColumn()
+  id: number; // Add a primary column
+
+  @ManyToOne(() => Party, party => party.users)
+  @JoinColumn({ name: 'partyid' })
   party: Party;
 
-  @ManyToOne(() => User, user => user.parties, { primary: true })
-  @JoinColumn({ name: 'UserID' })
+  @ManyToOne(() => User, user => user.parties)
+  @JoinColumn({ name: 'userid' })
   user: User;
 }
 
 @Entity()
-class Present {
-  @PrimaryGeneratedColumn()
+class Present{
+  @PrimaryGeneratedColumn({name:'presentsid'})
   PresentsID: number;
 
   @ManyToOne(() => Party, party => party.presents)
-  @JoinColumn({ name: 'PartyID' })
+  @JoinColumn({ name: 'partyid' })
   party: Party;
 
-  @ManyToOne(() => Present, present => present.presents)
-  @JoinColumn({ name: 'PresentID' })
+  @ManyToOne(() => Present, present => present.party)
+  @JoinColumn({ name: 'presentid' })
   present: Present;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2 })
+  @Column({name:'pricepayed', type: 'decimal', precision: 10, scale: 2 })
   PricePayed: number;
 }
 
 @Entity()
-class Post {
-  @PrimaryGeneratedColumn()
+class Posts{
+  @PrimaryGeneratedColumn({name:'postid'})
   PostID: number;
 
   @ManyToOne(() => User, user => user.posts)
-  @JoinColumn({ name: 'UserID' })
+  @JoinColumn({ name: 'userid' })
   user: User;
 
-  @Column('text')
+  @Column({name:'content',type:'text'})
   Content: string;
 
-  @Column({ default: () => 'CURRENT_TIMESTAMP' })
+  @Column({name:'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   Timestamp: Date;
 
-  @OneToMany(() => Like, like => like.post)
-  likes: Like[];
+  @OneToMany(() => Likes, likes => likes.post)
+  likes: Likes[];
 
-  @OneToMany(() => Comment, comment => comment.post)
+  @OneToMany(() => Comments, comments => comments.post)
   comments: Comment[];
 }
 
 @Entity()
-class Like {
-  @PrimaryGeneratedColumn()
+class Likes{
+  @PrimaryGeneratedColumn({name:'likeid'})
   LikeID: number;
 
-  @ManyToOne(() => Post, post => post.likes)
-  @JoinColumn({ name: 'PostID' })
-  post: Post;
+  @ManyToOne(() => Posts, posts => posts.likes)
+  @JoinColumn({ name: 'postid' })
+  post: Posts;
 
-  @ManyToOne(() => User, user => user.likes
-  @JoinColumn({ name: 'UserID' })
+  @ManyToOne(() => User, user => user.likes)
+  @JoinColumn({ name: 'userid' })
   user: User;
 }
 
 @Entity()
-class Comment {
-  @PrimaryGeneratedColumn()
+class Comments{
+  @PrimaryGeneratedColumn({name:'commetid'})
   CommentID: number;
 
-  @ManyToOne(() => Post, post => post.comments)
-  @JoinColumn({ name: 'PostID' })
-  post: Post;
+  @ManyToOne(() => Posts, posts => posts.comments)
+  @JoinColumn({ name: 'postid' })
+  post: Posts;
 
   @ManyToOne(() => User, user => user.comments)
-  @JoinColumn({ name: 'UserID' })
+  @JoinColumn({ name: 'userid' })
   user: User;
 
-  @Column('text')
+  @Column({name:'content',type:'text'})
   Content: string;
 
-  @Column({ default: () => 'CURRENT_TIMESTAMP' })
+  @Column({name:'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   Timestamp: Date;
 }
 
 @Entity()
-class Conversation {
-  @PrimaryGeneratedColumn()
+class Conversations{
+  @PrimaryGeneratedColumn({name:'conversationsid'})
   ConversationID: number;
 
-  @Column({ default: () => 'CURRENT_TIMESTAMP' })
+  @Column({name:'createdat', default: () => 'CURRENT_TIMESTAMP' })
   CreatedAt: Date;
 
-  @Column({ default: () => 'CURRENT_TIMESTAMP' })
+  @Column({name:'lastmessageat', default: () => 'CURRENT_TIMESTAMP' })
   LastMessageAt: Date;
 
-  @OneToMany(() => Participant, participant => participant.conversation)
-  participants: Participant[];
+  @OneToMany(() => Participants, participants => participants.conversation)
+  participants: Participants[];
 
-  @OneToMany(() => Message, message => message.conversation)
-  messages: Message[];
+  @OneToMany(() => Messages, messages => messages.conversation)
+  messages: Messages[];
 }
 
 @Entity()
-class Participant {
-  @ManyToOne(() => Conversation, conversation => conversation.participants, { primary: true })
-  @JoinColumn({ name: 'ConversationID' })
-  conversation: Conversation;
+class Participants {
+  @PrimaryGeneratedColumn()
+  id: number; // Add a primary column
 
-  @ManyToOne(() => User, user => user.participants, { primary: true })
-  @JoinColumn({ name: 'UserID' })
+  @ManyToOne(() => Conversations, conversations => conversations.participants)
+  @JoinColumn({ name: 'conversationid' })
+  conversation: Conversations;
+
+  @ManyToOne(() => User, user => user.participants)
+  @JoinColumn({ name: 'userid' })
   user: User;
 }
 
 @Entity()
-class Message {
-  @PrimaryGeneratedColumn()
+class Messages{
+  @PrimaryGeneratedColumn({name:'messageid'})
   MessageID: number;
 
-  @ManyToOne(() => Conversation, conversation => conversation.messages)
-  @JoinColumn({ name: 'ConversationID' })
-  conversation: Conversation;
+  @ManyToOne(() => Conversations, conversations => conversations.messages)
+  @JoinColumn({ name: 'conversationid' })
+  conversation: Conversations;
 
   @ManyToOne(() => User, user => user.messages)
-  @JoinColumn({ name: 'SenderID' })
+  @JoinColumn({ name: 'senderid' })
   sender: User;
 
-  @Column('text')
+  @Column({name:'content',type:'text'})
   Content: string;
 
   @Column({ default: () => 'CURRENT_TIMESTAMP' })
@@ -227,8 +213,8 @@ class Message {
 }
 
 @Entity()
-class Friendship extends BaseEntity {
-  @PrimaryGeneratedColumn()
+class Friendship {
+  @PrimaryGeneratedColumn({name:'friendshipid'})
   FriendshipID: number;
 
   @Column()
@@ -238,12 +224,12 @@ class Friendship extends BaseEntity {
   UserID2: number;
 
   @ManyToOne(() => User, user => user.friendships1)
-  @JoinColumn({ name: 'UserID1' })
+  @JoinColumn({ name: 'userid1' })
   user1: User;
 
   @ManyToOne(() => User, user => user.friendships2)
-  @JoinColumn({ name: 'UserID2' })
+  @JoinColumn({ name: 'userid2' })
   user2: User;
 }
 
-export { User, Address, Party, PartyUser, Present, Post, Like, Comment, Conversation, Participant, Message, Friendship };
+export { User, Party, PartyUser, Present, Posts, Likes, Comments, Conversations, Participants, Messages, Friendship };

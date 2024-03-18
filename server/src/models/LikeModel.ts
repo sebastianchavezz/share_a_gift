@@ -1,11 +1,12 @@
 import { getRepository, Repository } from 'typeorm';
-import { Like } from '../db/Entities'; // Assuming the entity for likes is named Like
+import { Likes } from '../db/Entities'; // Assuming the entity for likes is named Like
+import pool from '../db/db';
 
 class LikeModel {
-    private likeRepository: Repository<Like>;
+    private likeRepository: Repository<Likes>;
 
     constructor() {
-        this.likeRepository = getRepository(Like);
+        this.likeRepository = pool.getRepository(Likes);
     }
 
     async createLike(likeData: any): Promise<void> {

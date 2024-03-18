@@ -1,19 +1,24 @@
 import { getRepository, Repository } from 'typeorm';
-import { Post } from '../db/Entities'; // Assuming the entity for posts is named Post
+import { Posts } from '../db/Entities'; // Assuming the entity for posts is named Post
+import pool from '../db/db';
 
 class PostModel {
-    private postRepository: Repository<Post>;
+    private postRepository: Repository<Posts>;
 
     constructor() {
-        this.postRepository = getRepository(Post);
+        this.postRepository = pool.getRepository(Posts);
     }
 
     async createPost(postData: any): Promise<void> {
         // Logic to create a post (not implemented)
     }
 
-    async getPostById(postId: number): Promise<Post | undefined> {
-        return this.postRepository.findOne(postId);
+    async getPostById(postId: number): Promise<Posts> {
+        const post = await this.postRepository.findOne({ where: { PostID: postId } });
+        if (!post) {
+            throw new Error("Post not found");
+        }
+        return post;
     }
 
     async updatePost(postId: number, updatedPostData: any): Promise<void> {

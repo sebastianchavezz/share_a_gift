@@ -4,12 +4,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 // src/index.ts
+const cors_1 = __importDefault(require("cors"));
 const express_1 = __importDefault(require("express"));
 const UserController_1 = require("./controllers/UserController");
 const PartyController_1 = require("./controllers/PartyController");
 const PresentsController_1 = require("./controllers/PresentsController");
+//import session from 'express-session';
+//import passport from 'passport';
+//import './auth/passportConfig';
 const app = (0, express_1.default)();
-const port = 3000;
+app.use((0, cors_1.default)());
+const port = 3001;
+app.use(express_1.default.json());
+//app.use(session({ secret: 'c3728b36f425fb184f8f91b06b8293eb19f3f837e21b65a8172dfe80bebdd00c', resave: false, saveUninitialized: false }));
+//app.use(passport.initialize());
+//app.use(passport.session());
 app.get('/', (req, res) => {
     res.send('Hello, TypeScript with Express!');
 });
@@ -30,6 +39,29 @@ app.post('/add-present/:partyid', (req, res) => (0, PresentsController_1.AddPres
 app.get('/getPresents/:partyid', (req, res) => (0, PresentsController_1.GetAllPresents)(req, res));
 app.put('/update-present/:partyid/:presentid', (req, res) => (0, PresentsController_1.UpdatePresent)(req, res));
 app.delete('/delete-present/:partyid/:presentid', (req, res) => (0, PresentsController_1.DeletePresentFromParty)(req, res));
+app.get('/getParty-by-user/:userid', (req, res) => (0, PartyController_1.GetPartyByUser)(req, res));
+// Posts endpoints
+//app.post('/posts', (req, res) => CreatePost(req, res));
+//app.get('/posts/:postId', (req, res) => GetPost(req, res));
+//app.put('/posts/:postId', (req, res) => UpdatePost(req, res));
+//app.delete('/posts/:postId', (req, res) => DeletePost(req, res));
+//// Likes endpoints
+//app.post('/posts/:postId/likes', (req, res) => LikePost(req, res));
+//app.delete('/posts/:postId/likes', (req, res) => UnlikePost(req, res));
+//// Comments endpoints
+//app.post('/posts/:postId/comments', (req, res) => CreateComment(req, res));
+//app.get('/posts/:postId/comments', (req, res) => GetComments(req, res));
+//app.put('/posts/:postId/comments/:commentId', (req, res) => UpdateComment(req, res));
+//app.delete('/posts/:postId/comments/:commentId', (req, res) => DeleteComment(req, res));
+//// Conversations endpoints
+//app.post('/conversations', (req, res) => CreateConversation(req, res));
+//app.get('/conversations/:conversationId', (req, res) => GetConversation(req, res));
+//// Participants endpoints
+//app.post('/conversations/:conversationId/participants', (req, res) => AddParticipant(req, res));
+//app.delete('/conversations/:conversationId/participants/:userId', (req, res) => RemoveParticipant(req, res));
+//// Messages endpoints
+//app.post('/conversations/:conversationId/messages', (req, res) => SendMessage(req, res));
+//app.get('/conversations/:conversationId/messages', (req, res) => GetMessages(req, res));
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
 });

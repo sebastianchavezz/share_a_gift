@@ -1,28 +1,33 @@
 import { getRepository, Repository } from 'typeorm';
-import { Comment } from '../db/Entities'; // Assuming the entity for comments is named Comment
+import { Comments } from '../db/Entities'; // Assuming the entity for comments is named Comment
+import pool from '../db/db';
 
 class CommentModel {
-    private commentRepository: Repository<Comment>;
+    private commentsRepository: Repository<Comments>;
 
     constructor() {
-        this.commentRepository = getRepository(Comment);
+        this.commentsRepository = pool.getRepository(Comments);
     }
 
     async createComment(commentData: any): Promise<void> {
-        const newComment = this.commentRepository.create(commentData);
-        await this.commentRepository.save(newComment);
+        const newComment = this.commentsRepository.create(commentData);
+        await this.commentsRepository.save(newComment);
     }
 
     async updateComment(commentId: number, updatedCommentData: any): Promise<void> {
-        await this.commentRepository.update(commentId, updatedCommentData);
+        await this.commentsRepository.update(commentId, updatedCommentData);
     }
 
     async deleteComment(commentId: number): Promise<void> {
-        await this.commentRepository.delete(commentId);
+        await this.commentsRepository.delete(commentId);
     }
 
-    async getCommentById(commentId: number): Promise<Comment | undefined> {
-        return this.commentRepository.findOne(commentId);
+    async getCommentById(commentId: number): Promise<Comments> {
+        const comment = await this.commentsRepository.findOne({ where: { CommentID: commentId } });
+        if (!comment) {
+            throw new Error("Comment not found");
+        }
+        return comment;
     }
 }
 

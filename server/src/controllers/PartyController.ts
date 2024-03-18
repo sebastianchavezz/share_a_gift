@@ -29,6 +29,21 @@ export const GetParty = async (req: Request, res: Response): Promise<void> => {
     }
 };
 
+export const GetPartyByUser = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const userId = parseInt(req.params.userId); // Assuming partyId is passed in the request parameters
+        const party = await partyModel.getPartyByUser(userId);
+        if (party) {
+            res.status(200).json(party);
+        } else {
+            res.status(404).send("Party not found");
+        }
+    } catch (error) {
+        console.error("Error getting party:", error);
+        res.status(500).send("Internal Server Error");
+    }
+};
+
 export const AddUserToParty = async (req: Request, res: Response): Promise<void> => {
     try {
         const partyId = parseInt(req.params.partyId); // Assuming partyId is passed in the request parameters

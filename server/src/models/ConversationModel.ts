@@ -1,11 +1,12 @@
 import { getRepository, Repository } from 'typeorm';
-import { Conversation } from '../db/Entities'; // Assuming the entity for conversations is named Conversation
+import { Conversations } from '../db/Entities'; // Assuming the entity for conversations is named Conversation
+import pool from '../db/db';
 
 class ConversationModel {
-    private conversationRepository: Repository<Conversation>;
+    private conversationRepository: Repository<Conversations>;
 
     constructor() {
-        this.conversationRepository = getRepository(Conversation);
+        this.conversationRepository = pool.getRepository(Conversations);
     }
 
     async createConversation(conversationData: any): Promise<void> {

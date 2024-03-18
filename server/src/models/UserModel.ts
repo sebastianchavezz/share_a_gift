@@ -1,12 +1,13 @@
 //src/models/UserModel.ts
 import { getRepository, Repository } from 'typeorm';
 import { User } from '../db/Entities';
+import pool from '../db/db';
 
 class UserModel {
     private userRepository: Repository<User>;
 
     constructor() {
-        this.userRepository = getRepository(User);
+        this.userRepository = pool.getRepository(User);
     }
 
     async loginUser(username: string, password: string): Promise<User> {
@@ -15,7 +16,7 @@ class UserModel {
         if (!user) {
             throw new Error("User not found");
         }
-        const passwordMatch = await bcrypt.compare(password, user.Psswrd);
+        const passwordMatch = user.Psswrd === password;
         if (!passwordMatch) {
             throw new Error("Incorrect Password");
         }
@@ -23,19 +24,19 @@ class UserModel {
     }
 
     async registerUser(userData: any): Promise<void> {
-        const hashedPassword = await bcrypt.hash(userData.password, 10); // Hash the password
+        //TODO: check if email already in use
+        const hashedPassword = userData.password;
         const newUser = this.userRepository.create({
-            Username: userData.username,
-            Email: userData.email,
+            Username: userData.username, Email: userData.email,
             Tel: userData.tel,
             Psswrd: hashedPassword,
-            AddressID: userData.addressId,
+            //AddressID: userData.addressId,
         });
         await this.userRepository.save(newUser);
     }
 
     async getUserById(userId: number): Promise<User> {
-        const user = await this.userRepository.findOne(userId);    
+        const user = await this.userRepository.findOne({where:{UserID: userId}});    
         if(!user){
             throw new Error('User not Found');
         }

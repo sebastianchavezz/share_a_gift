@@ -1,18 +1,19 @@
 import { getRepository, Repository } from 'typeorm';
 import { Present } from '../db/Entities';
+import pool from '../db/db';
 
-class PresentModel {
+class PresentsModel {
     private presentRepository: Repository<Present>;
 
     constructor() {
-        this.presentRepository = getRepository(Present);
+        this.presentRepository = pool.getRepository(Present);
     }
 
     async addPresentToParty(partyId: number, presentData: any): Promise<void> {
         // Logic to add a present to a party (not implemented)
     }
 
-    async getAllPresentsForParty(partyId: number): Promise<Present[] | undefined> {
+    async getAllPresentsForParty(partyId: number): Promise<void> {
         // Logic to retrieve all presents for a party (not implemented)
     }
 
@@ -25,4 +26,4 @@ class PresentModel {
     }
 }
 
-export { PresentModel };
+export { PresentsModel };

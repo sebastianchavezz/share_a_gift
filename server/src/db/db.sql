@@ -1,22 +1,11 @@
--- Create the Address table
-CREATE TABLE IF NOT EXISTS Address (
-  AddressID SERIAL PRIMARY KEY,
-  Street VARCHAR(255),
-  City VARCHAR(100),
-  State VARCHAR(50),
-  PostalCode VARCHAR(20)
-);
-
--- Create the "User" table
-CREATE TABLE IF NOT EXISTS "User" (
-  UserID SERIAL PRIMARY KEY,
-  Username VARCHAR(50) NOT NULL UNIQUE,
+-- Create the "user" table
+CREATE TABLE IF NOT EXISTS "user" (
+  userID SERIAL PRIMARY KEY,
+  username VARCHAR(50) NOT NULL UNIQUE,
   Email VARCHAR(100) NOT NULL UNIQUE,
   Tel VARCHAR(20),
   Parties INTEGER,
-  Psswrd VARCHAR(100),
-  AddressID INTEGER,
-  FOREIGN KEY (AddressID) REFERENCES Address(AddressID)
+  Psswrd VARCHAR(100)
 );
 
 -- Create the Party table
@@ -28,13 +17,13 @@ CREATE TABLE IF NOT EXISTS Party (
   Messaging VARCHAR(255)
 );
 
--- Link Users and Parties (assuming many users can be in one party)
-CREATE TABLE IF NOT EXISTS PartyUser (
+-- Link users and Parties (assuming many users can be in one party)
+CREATE TABLE IF NOT EXISTS Partyuser (
   PartyID INTEGER NOT NULL,
-  UserID INTEGER NOT NULL,
-  PRIMARY KEY (PartyID, UserID),
+  userID INTEGER NOT NULL,
+  PRIMARY KEY (PartyID, userID),
   FOREIGN KEY (PartyID) REFERENCES Party(PartyID),
-  FOREIGN KEY (UserID) REFERENCES "User"(UserID)
+  FOREIGN KEY (userID) REFERENCES "user"(userID)
 );
 
 -- Create the Present table
@@ -57,39 +46,39 @@ CREATE TABLE IF NOT EXISTS Presents (
 -- Create the Posts table
 CREATE TABLE IF NOT EXISTS Posts (
     PostID SERIAL PRIMARY KEY,
-    UserID INTEGER NOT NULL,
+    userID INTEGER NOT NULL,
     Content TEXT,
     Timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (UserID) REFERENCES "User"(UserID)
+    FOREIGN KEY (userID) REFERENCES "user"(userID)
 );
 
 -- Create the Likes table
 CREATE TABLE IF NOT EXISTS Likes (
     LikeID SERIAL PRIMARY KEY,
     PostID INTEGER NOT NULL,
-    UserID INTEGER NOT NULL,
+    userID INTEGER NOT NULL,
     FOREIGN KEY (PostID) REFERENCES Posts(PostID),
-    FOREIGN KEY (UserID) REFERENCES "User"(UserID)
+    FOREIGN KEY (userID) REFERENCES "user"(userID)
 );
 
 -- Create the Comments table
 CREATE TABLE IF NOT EXISTS Comments (
     CommentID SERIAL PRIMARY KEY,
     PostID INTEGER NOT NULL,
-    UserID INTEGER NOT NULL,
+    userID INTEGER NOT NULL,
     Content TEXT,
     Timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (PostID) REFERENCES Posts(PostID),
-    FOREIGN KEY (UserID) REFERENCES "User"(UserID)
+    FOREIGN KEY (userID) REFERENCES "user"(userID)
 );
 
 -- Create the CommentLikes table (linking Likes to Comments)
 CREATE TABLE IF NOT EXISTS CommentLikes (
     LikeID SERIAL PRIMARY KEY,
     CommentID INTEGER NOT NULL,
-    UserID INTEGER NOT NULL,
+    userID INTEGER NOT NULL,
     FOREIGN KEY (CommentID) REFERENCES Comments(CommentID),
-    FOREIGN KEY (UserID) REFERENCES "User"(UserID)
+    FOREIGN KEY (userID) REFERENCES "user"(userID)
 );
 
 -- Create the Conversations table
@@ -99,13 +88,13 @@ CREATE TABLE IF NOT EXISTS Conversations (
     LastMessageAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create the Participants table (linking Users to Conversations)
+-- Create the Participants table (linking users to Conversations)
 CREATE TABLE IF NOT EXISTS Participants (
     ConversationID INTEGER NOT NULL,
-    UserID INTEGER NOT NULL,
-    PRIMARY KEY (ConversationID, UserID),
+    userID INTEGER NOT NULL,
+    PRIMARY KEY (ConversationID, userID),
     FOREIGN KEY (ConversationID) REFERENCES Conversations(ConversationID),
-    FOREIGN KEY (UserID) REFERENCES "User"(UserID)
+    FOREIGN KEY (userID) REFERENCES "user"(userID)
 );
 
 -- Create the Messages table (linking Messages to Conversations)
@@ -116,7 +105,7 @@ CREATE TABLE IF NOT EXISTS Messages (
     Content TEXT,
     Timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (ConversationID) REFERENCES Conversations(ConversationID),
-    FOREIGN KEY (SenderID) REFERENCES "User"(UserID)
+    FOREIGN KEY (SenderID) REFERENCES "user"(userID)
 );
 
 -- Create the GroupChat table
@@ -128,22 +117,30 @@ CREATE TABLE IF NOT EXISTS GroupChat (
     FOREIGN KEY (ConversationID) REFERENCES Conversations(ConversationID)
 );
 
--- Create the GroupChatParticipants table (linking Users to GroupChats)
+-- Create the GroupChatParticipants table (linking users to GroupChats)
 CREATE TABLE IF NOT EXISTS GroupChatParticipants (
     GroupChatID INTEGER NOT NULL,
-    UserID INTEGER NOT NULL,
-    PRIMARY KEY (GroupChatID, UserID),
+    userID INTEGER NOT NULL,
+    PRIMARY KEY (GroupChatID, userID),
     FOREIGN KEY (GroupChatID) REFERENCES GroupChat(GroupChatID),
-    FOREIGN KEY (UserID) REFERENCES "User"(UserID)
+    FOREIGN KEY (userID) REFERENCES "user"(userID)
 );
 
 -- Create the PrivateChat table
 CREATE TABLE IF NOT EXISTS PrivateChat (
     PrivateChatID SERIAL PRIMARY KEY,
-    User1ID INTEGER NOT NULL,
-    User2ID INTEGER NOT NULL,
+    user1ID INTEGER NOT NULL,
+    user2ID INTEGER NOT NULL,
     ConversationID INTEGER NOT NULL,
-    FOREIGN KEY (User1ID) REFERENCES "User"(UserID),
-    FOREIGN KEY (User2ID) REFERENCES "User"(UserID),
+    FOREIGN KEY (user1ID) REFERENCES "user"(userID),
+    FOREIGN KEY (user2ID) REFERENCES "user"(userID),
     FOREIGN KEY (ConversationID) REFERENCES Conversations(ConversationID)
+);
+
+CREATE TABLE IF NOT EXISTS Friendship (
+    FriendshipID SERIAL PRIMARY KEY,
+    userID1 INTEGER NOT NULL,
+    userID2 INTEGER NOT NULL,
+    FOREIGN KEY (userID1) REFERENCES "user"(userID),
+    FOREIGN KEY (userID2) REFERENCES "user"(userID)
 );

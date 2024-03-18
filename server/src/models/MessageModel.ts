@@ -1,11 +1,12 @@
 import { getRepository, Repository } from 'typeorm';
-import { Message } from '../db/Entities'; // Assuming the entity for messages is named Message
+import { Messages} from '../db/Entities'; // Assuming the entity for messages is named Message
+import pool from '../db/db';
 
 class MessageModel {
-    private messageRepository: Repository<Message>;
+    private messageRepository: Repository<Messages>;
 
     constructor() {
-        this.messageRepository = getRepository(Message);
+        this.messageRepository = pool.getRepository(Messages);
     }
 
     async createMessage(messageData: any): Promise<void> {

@@ -23,8 +23,10 @@
       <v-btn type="submit" color="primary">Create Party</v-btn>
     </v-form>
   </template>
+
+<script>
+  import axios from 'axios';
   
-  <script>
   export default {
     data() {
       return {
@@ -35,18 +37,23 @@
       };
     },
     methods: {
-      submitForm() {
+      async submitForm() {
         const newParty = {
-          name: this.partyName,
           occasion: this.occasion,
           date: this.date,
-          members: this.members.map(member => member.email),
+          users: this.members.map(member => ({ email: member.email }))
         };
   
-        this.$emit("submit", newParty);
+        try {
+          const response = await axios.post('http://localhost:3001/add-party', newParty);
+          console.log('Party added successfully:', response.data);
+          this.$emit('party-added', response.data);
+        } catch (error) {
+          console.error('Error adding party:', error.message);
+          // Handle error
+        }
   
         // Clear the form fields after submission
-        this.partyName = "";
         this.occasion = "";
         this.date = null;
         this.members = [{ email: "" }];
@@ -59,5 +66,4 @@
       },
     },
   };
-  </script>
-  
+</script>

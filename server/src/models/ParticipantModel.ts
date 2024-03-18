@@ -1,11 +1,12 @@
 import { getRepository, Repository } from 'typeorm';
-import { Participant } from '../db/Entities'; // Assuming the entity for participants is named Participant
+import { Participants } from '../db/Entities'; // Assuming the entity for participants is named Participant
+import pool from '../db/db';
 
 class ParticipantModel {
-    private participantRepository: Repository<Participant>;
+    private participantRepository: Repository<Participants>;
 
     constructor() {
-        this.participantRepository = getRepository(Participant);
+        this.participantRepository = pool.getRepository(Participants);
     }
 
     async addParticipantToConversation(conversationId: number, userId: number): Promise<void> {
