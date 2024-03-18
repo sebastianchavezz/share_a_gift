@@ -1,9 +1,9 @@
 
 import "reflect-metadata";
-import { PrimaryColumn, ManyToOne, JoinColumn, BaseEntity ,Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, JoinTable } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
 
 @Entity()
-class User extends BaseEntity{
+class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   UserID: number;
 
@@ -25,13 +25,27 @@ class User extends BaseEntity{
   @Column()
   AddressID: number;
 
-  @OneToMany(type => PartyUser, partyUser => partyUser.user)
+  @OneToMany(() => PartyUser, partyUser => partyUser.user)
   parties: PartyUser[];
 
-  // Add other relevant user details here (e.g., password hash)
+  @OneToMany(() => Post, post => post.user)
+  posts: Post[];
 
-  @OneToMany(type => Address, address => address.user)
+  @OneToMany(() => Comment, comment => comment.user)
+  comments: Comment[];
+
+  @OneToMany(() => Message, message => message.sender)
+  messages: Message[];
+
+  @ManyToOne(() => Address, address => address.user)
+  @JoinColumn({ name: 'AddressID' })
   address: Address;
+
+  @OneToMany(() => Friendship, friendship => friendship.user1)
+  friendships1: Friendship[];
+
+  @OneToMany(() => Friendship, friendship => friendship.user2)
+  friendships2: Friendship[];
 }
 
 @Entity()
@@ -51,9 +65,7 @@ class Address {
   @Column({ length: 20, nullable: true })
   PostalCode: string;
 
-  // Add other relevant address details here
-
-  @OneToMany(type => User, user => user.address)
+  @OneToMany(() => User, user => user.address)
   user: User;
 }
 
@@ -74,27 +86,164 @@ class Party {
   @Column({ length: 255, nullable: true })
   Messaging: string;
 
-  // Add attributes defining the party (e.g., name, date)
-
-  @OneToMany(type => PartyUser, partyUser => partyUser.party)
+  @OneToMany(() => PartyUser, partyUser => partyUser.party)
   users: PartyUser[];
+
+  @OneToMany(() => Present, present => present.party)
+  presents: Present[];
 }
 
 @Entity()
 class PartyUser {
-  @PrimaryColumn() // Since the primary key consists of two columns, use @PrimaryColumn instead of @PrimaryGeneratedColumn
-  PartyID: number;
+  @ManyToOne(() => Party, party => party.users, { primary: true })
+  @JoinColumn({ name: 'PartyID' })
+  party: Party;
 
-  @PrimaryColumn() // Second part of the composite primary key
-  UserID: number;
-
-  @ManyToOne(() => Party, party => party.users) // Define ManyToOne relationship with Party entity
-  @JoinColumn({ name: 'PartyID' }) // Specify the foreign key column
-  party: Party; // Define the property to hold the related Party entity
-
-  @ManyToOne(() => User, user => user.parties) // Define ManyToOne relationship with User entity
-  @JoinColumn({ name: 'UserID' }) // Specify the foreign key column
-  user: User; // Define the property to hold the related User entity
+  @ManyToOne(() => User, user => user.parties, { primary: true })
+  @JoinColumn({ name: 'UserID' })
+  user: User;
 }
 
-export { User, Address, Party, PartyUser };
+@Entity()
+class Present {
+  @PrimaryGeneratedColumn()
+  PresentsID: number;
+
+  @ManyToOne(() => Party, party => party.presents)
+  @JoinColumn({ name: 'PartyID' })
+  party: Party;
+
+  @ManyToOne(() => Present, present => present.presents)
+  @JoinColumn({ name: 'PresentID' })
+  present: Present;
+
+  @Column({ type: 'decimal', precision: 10, scale: 2 })
+  PricePayed: number;
+}
+
+@Entity()
+class Post {
+  @PrimaryGeneratedColumn()
+  PostID: number;
+
+  @ManyToOne(() => User, user => user.posts)
+  @JoinColumn({ name: 'UserID' })
+  user: User;
+
+  @Column('text')
+  Content: string;
+
+  @Column({ default: () => 'CURRENT_TIMESTAMP' })
+  Timestamp: Date;
+
+  @OneToMany(() => Like, like => like.post)
+  likes: Like[];
+
+  @OneToMany(() => Comment, comment => comment.post)
+  comments: Comment[];
+}
+
+@Entity()
+class Like {
+  @PrimaryGeneratedColumn()
+  LikeID: number;
+
+  @ManyToOne(() => Post, post => post.likes)
+  @JoinColumn({ name: 'PostID' })
+  post: Post;
+
+  @ManyToOne(() => User, user => user.likes
+  @JoinColumn({ name: 'UserID' })
+  user: User;
+}
+
+@Entity()
+class Comment {
+  @PrimaryGeneratedColumn()
+  CommentID: number;
+
+  @ManyToOne(() => Post, post => post.comments)
+  @JoinColumn({ name: 'PostID' })
+  post: Post;
+
+  @ManyToOne(() => User, user => user.comments)
+  @JoinColumn({ name: 'UserID' })
+  user: User;
+
+  @Column('text')
+  Content: string;
+
+  @Column({ default: () => 'CURRENT_TIMESTAMP' })
+  Timestamp: Date;
+}
+
+@Entity()
+class Conversation {
+  @PrimaryGeneratedColumn()
+  ConversationID: number;
+
+  @Column({ default: () => 'CURRENT_TIMESTAMP' })
+  CreatedAt: Date;
+
+  @Column({ default: () => 'CURRENT_TIMESTAMP' })
+  LastMessageAt: Date;
+
+  @OneToMany(() => Participant, participant => participant.conversation)
+  participants: Participant[];
+
+  @OneToMany(() => Message, message => message.conversation)
+  messages: Message[];
+}
+
+@Entity()
+class Participant {
+  @ManyToOne(() => Conversation, conversation => conversation.participants, { primary: true })
+  @JoinColumn({ name: 'ConversationID' })
+  conversation: Conversation;
+
+  @ManyToOne(() => User, user => user.participants, { primary: true })
+  @JoinColumn({ name: 'UserID' })
+  user: User;
+}
+
+@Entity()
+class Message {
+  @PrimaryGeneratedColumn()
+  MessageID: number;
+
+  @ManyToOne(() => Conversation, conversation => conversation.messages)
+  @JoinColumn({ name: 'ConversationID' })
+  conversation: Conversation;
+
+  @ManyToOne(() => User, user => user.messages)
+  @JoinColumn({ name: 'SenderID' })
+  sender: User;
+
+  @Column('text')
+  Content: string;
+
+  @Column({ default: () => 'CURRENT_TIMESTAMP' })
+  Timestamp: Date;
+}
+
+@Entity()
+class Friendship extends BaseEntity {
+  @PrimaryGeneratedColumn()
+  FriendshipID: number;
+
+  @Column()
+  UserID1: number;
+
+  @Column()
+  UserID2: number;
+
+  @ManyToOne(() => User, user => user.friendships1)
+  @JoinColumn({ name: 'UserID1' })
+  user1: User;
+
+  @ManyToOne(() => User, user => user.friendships2)
+  @JoinColumn({ name: 'UserID2' })
+  user2: User;
+}
+
+export { User, Address, Party, PartyUser, Present, Post, Like, Comment, Conversation, Participant, Message, Friendship };
