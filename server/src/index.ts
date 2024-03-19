@@ -34,13 +34,13 @@ app.get('/get-party', (req, res) => GetParty(req, res));
 app.post('/add-user/:partyid', (req, res) => AddUserToParty(req, res));
 app.put('/update-party/:partyid', (req, res) => UpdateParty(req, res));
 app.delete('/delete-party/:partyid', (req, res) => DeleteParty(req, res));
+app.get('/getParty-by-user/:userid',(req,res) => GetPartyByUser(req, res));
 
 // Present endpoints
 app.post('/add-present/:partyid', (req, res) => AddPresentToParty(req, res));
 app.get('/getPresents/:partyid', (req, res) => GetAllPresents(req, res));
 app.put('/update-present/:partyid/:presentid', (req, res) => UpdatePresent(req, res));
 app.delete('/delete-present/:partyid/:presentid', (req, res) => DeletePresentFromParty(req, res));
-app.get('/getParty-by-user/:userid',(req,res) => GetPartyByUser(req, res));
 
 // Posts endpoints
 //app.post('/posts', (req, res) => CreatePost(req, res));

@@ -26,6 +26,7 @@
 
 <script>
   import axios from 'axios';
+  import {getCurrentUserId, userIsLoggedIn }from '@/auth/auth';
   
   export default {
     data() {
@@ -38,13 +39,19 @@
     },
     methods: {
       async submitForm() {
-        const newParty = {
-          occasion: this.occasion,
-          date: this.date,
-          users: this.members.map(member => ({ email: member.email }))
-        };
-  
         try {
+          if (!userIsLoggedIn()) {
+            // Redirect to login page or show login modal
+            return;
+          }
+          // Retrieve user ID
+          const userId = getCurrentUserId();
+          const newParty = {
+            userId: userId,
+            occasion: this.occasion,
+            date: this.date,
+            users: this.members.map(member => ({ email: member.email }))
+          };
           const response = await axios.post('http://localhost:3001/add-party', newParty);
           console.log('Party added successfully:', response.data);
           this.$emit('party-added', response.data);

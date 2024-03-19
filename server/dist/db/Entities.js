@@ -113,9 +113,13 @@ let PartyUser = class PartyUser {
 };
 exports.PartyUser = PartyUser;
 __decorate([
-    (0, typeorm_1.PrimaryGeneratedColumn)(),
+    (0, typeorm_1.PrimaryColumn)(),
     __metadata("design:type", Number)
-], PartyUser.prototype, "id", void 0);
+], PartyUser.prototype, "partyid", void 0);
+__decorate([
+    (0, typeorm_1.PrimaryColumn)(),
+    __metadata("design:type", Number)
+], PartyUser.prototype, "userid", void 0);
 __decorate([
     (0, typeorm_1.ManyToOne)(() => Party, party => party.users),
     (0, typeorm_1.JoinColumn)({ name: 'partyid' }),
@@ -127,7 +131,7 @@ __decorate([
     __metadata("design:type", User)
 ], PartyUser.prototype, "user", void 0);
 exports.PartyUser = PartyUser = __decorate([
-    (0, typeorm_1.Entity)()
+    (0, typeorm_1.Entity)({ name: 'partyuser' })
 ], PartyUser);
 let Present = class Present {
 };

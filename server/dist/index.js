@@ -34,12 +34,12 @@ app.get('/get-party', (req, res) => (0, PartyController_1.GetParty)(req, res));
 app.post('/add-user/:partyid', (req, res) => (0, PartyController_1.AddUserToParty)(req, res));
 app.put('/update-party/:partyid', (req, res) => (0, PartyController_1.UpdateParty)(req, res));
 app.delete('/delete-party/:partyid', (req, res) => (0, PartyController_1.DeleteParty)(req, res));
+app.get('/getParty-by-user/:userid', (req, res) => (0, PartyController_1.GetPartyByUser)(req, res));
 // Present endpoints
 app.post('/add-present/:partyid', (req, res) => (0, PresentsController_1.AddPresentToParty)(req, res));
 app.get('/getPresents/:partyid', (req, res) => (0, PresentsController_1.GetAllPresents)(req, res));
 app.put('/update-present/:partyid/:presentid', (req, res) => (0, PresentsController_1.UpdatePresent)(req, res));
 app.delete('/delete-present/:partyid/:presentid', (req, res) => (0, PresentsController_1.DeletePresentFromParty)(req, res));
-app.get('/getParty-by-user/:userid', (req, res) => (0, PartyController_1.GetPartyByUser)(req, res));
 // Posts endpoints
 //app.post('/posts', (req, res) => CreatePost(req, res));
 //app.get('/posts/:postId', (req, res) => GetPost(req, res));

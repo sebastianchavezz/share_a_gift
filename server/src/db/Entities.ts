@@ -1,7 +1,7 @@
 //src/db/Entities.ts
 
 import "reflect-metadata";
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryColumn, PrimaryGeneratedColumn, Column, BaseEntity, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
 
 @Entity()
 class User extends BaseEntity {
@@ -73,10 +73,13 @@ class Party {
   presents: Present[];
 }
 
-@Entity()
+@Entity({ name: 'partyuser' })
 class PartyUser{
-  @PrimaryGeneratedColumn()
-  id: number; // Add a primary column
+  @PrimaryColumn()
+  partyid: number;
+
+  @PrimaryColumn()
+  userid: number;
 
   @ManyToOne(() => Party, party => party.users)
   @JoinColumn({ name: 'partyid' })
@@ -86,7 +89,6 @@ class PartyUser{
   @JoinColumn({ name: 'userid' })
   user: User;
 }
-
 @Entity()
 class Present{
   @PrimaryGeneratedColumn({name:'presentsid'})
