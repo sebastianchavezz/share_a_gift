@@ -1,6 +1,7 @@
 import { getRepository, Repository } from 'typeorm';
 import { Party,User } from '../db/Entities';
 import pool from '../db/db';
+import { mailToRegister } from '../utils/Mailer';
 
 class PartyModel {
     private partyRepository: Repository<Party>;
@@ -70,8 +71,6 @@ class PartyModel {
         return user.parties;
     }
     
-    
-    
     async addUserToParty(partyId: number, userId: number): Promise<void> {
         // Logic to add a user to a party (not implemented)
     }
@@ -99,11 +98,16 @@ class PartyModel {
         if (!user) {
             user = new User();
             user.Email = email;
+            // here we send an email if it doesnt have an account yet
+            //Warning: Check if this is good later on
+            mailToRegister(email); 
             await this.userRepository.save(user);
         }
 
         return user;
     }
 }
+
+ 
 
 export { PartyModel };

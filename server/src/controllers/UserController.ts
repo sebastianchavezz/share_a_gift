@@ -42,7 +42,8 @@ export const GetUser = async (req: Request, res: Response): Promise<void> => {
         const userId = parseInt(req.params.userId); // Assuming userId is passed in the request parameters
         const user = await userModel.getUserById(userId);
         if (user) {
-            res.status(200).json(user);
+            
+            res.status(200).json({'fullName':user.Username, 'email':user.Email});
         } else {
             res.status(404).send("User not found");
         }

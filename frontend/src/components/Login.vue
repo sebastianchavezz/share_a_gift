@@ -19,6 +19,7 @@
 
 <script>
 import axios from 'axios';
+import { getCurrentUserId } from '@/auth/auth'; // Import getCurrentUserId function
 
 export default {
   data() {
@@ -38,15 +39,32 @@ export default {
         
         localStorage.setItem('accessToken', response.data.token);
         localStorage.setItem('userId', response.data.userId);
-        // Handle successful login
-        console.log('Login successful:', response.data);
+        
+        // Fetch user data after successful login
+        this.fetchAndDisplayUserData(response.data.userId);
+        
+        // Emit an event containing the user data
+        this.$emit('userLoggedIn', response.data.user);
         
         // Redirect to another page or update UI as needed
+        // For example, redirect to the home page
+        this.$router.push('/');
       } catch (error) {
         console.error('Login failed:', error.message);
         // Handle login error, e.g., show error message to the user
       }
     },
+    async fetchAndDisplayUserData(userId) {
+      try {
+        const response = await axios.get(`http://localhost:3001/get-user/${userId}`);
+        const userData = response.data;
+        console.log('User data:', userData);
+        // Update UI to display user data as needed
+      } catch (error) {
+        console.error('Error fetching user data:', error.message);
+        // Handle error fetching user data
+      }
+    }
   },
 };
 </script>

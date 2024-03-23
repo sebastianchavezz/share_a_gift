@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PartyModel = void 0;
 const Entities_1 = require("../db/Entities");
 const db_1 = __importDefault(require("../db/db"));
+const Mailer_1 = require("../utils/Mailer");
 class PartyModel {
     constructor() {
         this.partyRepository = db_1.default.getRepository(Entities_1.Party);
@@ -76,6 +77,9 @@ class PartyModel {
         if (!user) {
             user = new Entities_1.User();
             user.Email = email;
+            // here we send an email if it doesnt have an account yet
+            //Warning: Check if this is good later on
+            (0, Mailer_1.mailToRegister)(email);
             await this.userRepository.save(user);
         }
         return user;
