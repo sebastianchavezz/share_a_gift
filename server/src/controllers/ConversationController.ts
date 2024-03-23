@@ -1,4 +1,4 @@
-// src/controllers/ConversationController.ts
+/* // src/controllers/ConversationController.ts
 import { Request, Response } from "express";
 import { ConversationModel } from "../models/ConversationModel";
 
@@ -23,4 +23,4 @@ export const deleteConversation = async (req: Request, res: Response): Promise<v
         console.error("Error deleting conversation:", error);
         res.status(500).send("Internal Server Error");
     }
-};
+}; */

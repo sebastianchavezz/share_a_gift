@@ -1,4 +1,4 @@
-import { getRepository, Repository } from 'typeorm';
+/* import { getRepository, Repository } from 'typeorm';
 import { Posts } from '../db/Entities'; // Assuming the entity for posts is named Post
 import pool from '../db/db';
 
@@ -31,3 +31,4 @@ class PostModel {
 }
 
 export { PostModel };
+ */

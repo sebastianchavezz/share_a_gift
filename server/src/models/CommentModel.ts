@@ -1,4 +1,4 @@
-import { getRepository, Repository } from 'typeorm';
+/* import { getRepository, Repository } from 'typeorm';
 import { Comments } from '../db/Entities'; // Assuming the entity for comments is named Comment
 import pool from '../db/db';
 
@@ -32,3 +32,4 @@ class CommentModel {
 }
 
 export { CommentModel };
+ */

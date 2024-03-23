@@ -4,6 +4,7 @@ import { PartyModel } from "../models/PartyModel";
 
 const partyModel = new PartyModel();
 
+//TODO: data validation in every CONTROLLERS
 export const AddParty = async (req: Request, res: Response): Promise<void> => {
     try {
         console.log('body; ', req.body);
@@ -35,8 +36,10 @@ export const GetPartyByUser = async (req: Request, res: Response): Promise<void>
         console.log("request body input:", req.params.userid);
         const userId = parseInt(req.params.userid, 10); // Assuming partyId is passed in the request parameters
         const party = await partyModel.getPartyByUser(userId);
+        const parties_list = party.map(p => p.Occasion);
+        console.log('parties: ',parties_list);
         if (party) {
-            res.status(200).json(party);
+            res.status(200).json(parties_list);
         } else {
             res.status(404).send("Party not found");
         }

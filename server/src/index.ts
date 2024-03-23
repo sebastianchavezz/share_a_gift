@@ -3,7 +3,7 @@ import  cors from 'cors';
 import express, { Request, Response} from 'express';
 import {GetUser, Login, Register, DeleteUser, UpdateUser} from './controllers/UserController';
 import {AddParty, AddUserToParty, GetParty, DeleteParty, UpdateParty, GetPartyByUser} from './controllers/PartyController';
-import { AddPresentToParty, GetAllPresents, DeletePresentFromParty, UpdatePresent} from './controllers/PresentsController';
+
 //import session from 'express-session';
 //import passport from 'passport';
 //import './auth/passportConfig';
@@ -37,10 +37,10 @@ app.delete('/delete-party/:partyid', (req, res) => DeleteParty(req, res));
 app.get('/getParty-by-user/:userid',(req,res) => GetPartyByUser(req, res));
 
 // Present endpoints
-app.post('/add-present/:partyid', (req, res) => AddPresentToParty(req, res));
+/* app.post('/add-present/:partyid', (req, res) => AddPresentToParty(req, res));
 app.get('/getPresents/:partyid', (req, res) => GetAllPresents(req, res));
 app.put('/update-present/:partyid/:presentid', (req, res) => UpdatePresent(req, res));
-app.delete('/delete-present/:partyid/:presentid', (req, res) => DeletePresentFromParty(req, res));
+app.delete('/delete-present/:partyid/:presentid', (req, res) => DeletePresentFromParty(req, res)); */
 
 // Posts endpoints
 //app.post('/posts', (req, res) => CreatePost(req, res));

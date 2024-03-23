@@ -1,4 +1,4 @@
-import { getRepository, Repository } from 'typeorm';
+/* import { getRepository, Repository } from 'typeorm';
 import { Conversations } from '../db/Entities'; // Assuming the entity for conversations is named Conversation
 import pool from '../db/db';
 
@@ -19,4 +19,4 @@ class ConversationModel {
     }
 }
 
-export { ConversationModel };
+export { ConversationModel }; */

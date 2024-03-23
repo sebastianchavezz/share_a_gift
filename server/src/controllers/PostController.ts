@@ -1,4 +1,4 @@
-// src/controllers/PostController.ts
+/* // src/controllers/PostController.ts
 import { Request, Response } from "express";
 import { PostModel } from "../models/PostModel";
 
@@ -50,3 +50,4 @@ export const deletePost = async (req: Request, res: Response): Promise<void> => 
         res.status(500).send("Internal Server Error");
     }
 };
+ */

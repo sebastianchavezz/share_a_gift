@@ -1,20 +1,23 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ParticipantModel = void 0;
-const Entities_1 = require("../db/Entities"); // Assuming the entity for participants is named Participant
-const db_1 = __importDefault(require("../db/db"));
+/* import { getRepository, Repository } from 'typeorm';
+import { Participants } from '../db/Entities'; // Assuming the entity for participants is named Participant
+import pool from '../db/db';
+
 class ParticipantModel {
+    private participantRepository: Repository<Participants>;
+
     constructor() {
-        this.participantRepository = db_1.default.getRepository(Entities_1.Participants);
+        this.participantRepository = pool.getRepository(Participants);
     }
-    async addParticipantToConversation(conversationId, userId) {
+
+    async addParticipantToConversation(conversationId: number, userId: number): Promise<void> {
         // Logic to add a participant to a conversation (not implemented)
     }
-    async removeParticipantFromConversation(conversationId, userId) {
+
+    async removeParticipantFromConversation(conversationId: number, userId: number): Promise<void> {
         // Logic to remove a participant from a conversation (not implemented)
     }
 }
-exports.ParticipantModel = ParticipantModel;
+
+export { ParticipantModel };
+ */ 

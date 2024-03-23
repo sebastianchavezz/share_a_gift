@@ -29,7 +29,7 @@ export const Login = async (req: Request, res: Response): Promise<void> => {
 export const Register = async (req: Request, res: Response): Promise<void> => {
     try {
         console.log('REGISTERING');
-        await userModel.registerUser(req.body);
+        await userModel.addUser(req.body);
         res.status(200).send('User registered Successfully');
     } catch (error) {
         console.error("Error registering user:", error);

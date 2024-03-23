@@ -1,4 +1,4 @@
-// src/controllers/ParticipantController.ts
+/* // src/controllers/ParticipantController.ts
 import { Request, Response } from "express";
 import { ParticipantModel } from "../models/ParticipantModel";
 
@@ -27,3 +27,4 @@ export const removeParticipantFromConversation = async (req: Request, res: Respo
         res.status(500).send("Internal Server Error");
     }
 };
+ */

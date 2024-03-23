@@ -1,4 +1,4 @@
-// src/controllers/CommentController.ts
+/* // src/controllers/CommentController.ts
 import { Request, Response } from "express";
 import { CommentModel } from "../models/CommentModel";
 
@@ -50,3 +50,4 @@ export const getCommentById = async (req: Request, res: Response): Promise<void>
         res.status(500).send("Internal Server Error");
     }
 };
+ */

@@ -1,4 +1,4 @@
-// src/controllers/LikeController.ts
+/* // src/controllers/LikeController.ts
 import { Request, Response } from "express";
 import { LikeModel } from "../models/LikeModel";
 
@@ -24,3 +24,4 @@ export const deleteLike = async (req: Request, res: Response): Promise<void> => 
         res.status(500).send("Internal Server Error");
     }
 };
+ */

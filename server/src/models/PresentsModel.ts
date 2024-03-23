@@ -1,4 +1,4 @@
-import { getRepository, Repository } from 'typeorm';
+/* import { getRepository, Repository } from 'typeorm';
 import { Present } from '../db/Entities';
 import pool from '../db/db';
 
@@ -27,3 +27,4 @@ class PresentsModel {
 }
 
 export { PresentsModel };
+ */

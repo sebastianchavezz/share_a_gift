@@ -1,26 +1,31 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.PresentsModel = void 0;
-const Entities_1 = require("../db/Entities");
-const db_1 = __importDefault(require("../db/db"));
+/* import { getRepository, Repository } from 'typeorm';
+import { Present } from '../db/Entities';
+import pool from '../db/db';
+
 class PresentsModel {
+    private presentRepository: Repository<Present>;
+
     constructor() {
-        this.presentRepository = db_1.default.getRepository(Entities_1.Present);
+        this.presentRepository = pool.getRepository(Present);
     }
-    async addPresentToParty(partyId, presentData) {
+
+    async addPresentToParty(partyId: number, presentData: any): Promise<void> {
         // Logic to add a present to a party (not implemented)
     }
-    async getAllPresentsForParty(partyId) {
+
+    async getAllPresentsForParty(partyId: number): Promise<void> {
         // Logic to retrieve all presents for a party (not implemented)
     }
-    async deletePresentFromParty(partyId, presentId) {
+
+    async deletePresentFromParty(partyId: number, presentId: number): Promise<void> {
         // Logic to delete a present from a party (not implemented)
     }
-    async updatePresent(presentId, updatedPresentData) {
+
+    async updatePresent(presentId: number, updatedPresentData: any): Promise<void> {
         // Logic to update a present (not implemented)
     }
 }
-exports.PresentsModel = PresentsModel;
+
+export { PresentsModel };
+ */ 

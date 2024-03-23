@@ -22,7 +22,7 @@ class UserModel {
         }
         return user;
     }
-    async registerUser(userData) {
+    async addUser(userData) {
         //TODO: check if email already in use
         const hashedPassword = userData.password;
         const newUser = this.userRepository.create({
@@ -46,6 +46,13 @@ class UserModel {
     }
     async deleteUser(userId) {
         await this.userRepository.delete(userId);
+    }
+    async findUserByEmail(email) {
+        const user = await this.userRepository.findOne({ where: { Email: email } });
+        if (!user) {
+            throw new Error('No user with this email!');
+        }
+        return user;
     }
 }
 exports.UserModel = UserModel;

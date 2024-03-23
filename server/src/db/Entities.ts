@@ -1,56 +1,37 @@
 //src/db/Entities.ts
 
+import { extname } from "path";
 import "reflect-metadata";
-import { Entity, PrimaryColumn, PrimaryGeneratedColumn, Column, BaseEntity, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryColumn, PrimaryGeneratedColumn, Column, BaseEntity, OneToMany, ManyToOne, JoinColumn, ManyToMany, JoinTable } from 'typeorm';
 
 @Entity()
 class User extends BaseEntity {
   @PrimaryGeneratedColumn({name:'userid'})
   UserID!: number;
 
-  @Column({name:'username', length: 50, unique: true })
+  @Column({name:'username', length: 50, unique: true, nullable: true })
   Username!: string;
 
   @Column({name:'email', length: 100, unique: true })
   Email!: string;
 
-  @Column({name:'tel', length: 20, nullable: true })
+  @Column({name:'tel', length: 20, nullable: true})
   Tel!: string;
 
   @Column({name:'parties', default: 0 })
   Parties!: number;
 
-  @Column({name:'psswrd', length: 100 })
+  @Column({name:'psswrd', length: 100, nullable: true })
   Psswrd!: string;
 
-  @OneToMany(() => Participants, participants => participants.user)
-  participants!: Participants[];
-
-  @OneToMany(() => Likes, likes => likes.user)
-  likes!: Likes[];
-
-  @OneToMany(() => PartyUser, partyUser => partyUser.user)
-  parties!: PartyUser[];
-
-  @OneToMany(() => Posts, posts => posts.user)
-  posts!: Posts[];
-
-  @OneToMany(() => Comments, comments => comments.user)
-  comments!: Comments[];
-
-  @OneToMany(() => Messages, messages => messages.sender)
-  messages!: Messages[];
-
-  @OneToMany(() => Friendship, friendship => friendship.user1)
-  friendships1!: Friendship[];
-
-  @OneToMany(() => Friendship, friendship => friendship.user2)
-  friendships2!: Friendship[];
+  @ManyToMany(() => Party, (party) => party.users)
+  @JoinTable()
+  parties!: Party[];
 }
 
 
 @Entity()
-class Party {
+class Party extends BaseEntity{
   @PrimaryGeneratedColumn({name:'partyid'})
   PartyID: number;
 
@@ -66,30 +47,41 @@ class Party {
   @Column({name:'messaging', length: 255, nullable: true })
   Messaging: string;
 
-  @OneToMany(() => PartyUser, partyUser => partyUser.party)
-  users: PartyUser[];
+  @ManyToMany(() => User, (user) => user.parties, {
+    cascade: true,
+  })
+  users: User[];
 
+}
+
+/* 
   @OneToMany(() => Present, present => present.party)
-  presents: Present[];
-}
+  presents: Present[]; */
+//party above
+//user below
+/*   @OneToMany(() => Participants, participants => participants.user)
+  participants!: Participants[];
 
-@Entity({ name: 'partyuser' })
-class PartyUser{
-  @PrimaryColumn()
-  partyid: number;
+  @OneToMany(() => Likes, likes => likes.user)
+  likes!: Likes[];
 
-  @PrimaryColumn()
-  userid: number;
 
-  @ManyToOne(() => Party, party => party.users)
-  @JoinColumn({ name: 'partyid' })
-  party: Party;
+  @OneToMany(() => Posts, posts => posts.user)
+  posts!: Posts[];
 
-  @ManyToOne(() => User, user => user.parties)
-  @JoinColumn({ name: 'userid' })
-  user: User;
-}
-@Entity()
+  @OneToMany(() => Comments, comments => comments.user)
+  comments!: Comments[];
+
+  @OneToMany(() => Messages, messages => messages.sender)
+  messages!: Messages[];
+
+  @OneToMany(() => Friendship, friendship => friendship.user1)
+  friendships1!: Friendship[];
+
+  @OneToMany(() => Friendship, friendship => friendship.user2)
+  friendships2!: Friendship[]; */
+
+/* @Entity()
 class Present{
   @PrimaryGeneratedColumn({name:'presentsid'})
   PresentsID: number;
@@ -233,5 +225,6 @@ class Friendship {
   @JoinColumn({ name: 'userid2' })
   user2: User;
 }
+ */
+export { User, Party}
 
-export { User, Party, PartyUser, Present, Posts, Likes, Comments, Conversations, Participants, Messages, Friendship };

@@ -1,4 +1,4 @@
-//src/controllers/PresentController.ts
+/* //src/controllers/PresentController.ts
 import { Request, Response } from "express";
 import { PresentsModel } from "../models/PresentsModel";
 
@@ -53,3 +53,4 @@ export const UpdatePresent = async (req: Request, res: Response): Promise<void> 
         res.status(500).send("Internal Server Error");
     }
 };
+ */

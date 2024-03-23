@@ -1,26 +1,29 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.CommentModel = void 0;
-const Entities_1 = require("../db/Entities"); // Assuming the entity for comments is named Comment
-const db_1 = __importDefault(require("../db/db"));
+/* import { getRepository, Repository } from 'typeorm';
+import { Comments } from '../db/Entities'; // Assuming the entity for comments is named Comment
+import pool from '../db/db';
+
 class CommentModel {
+    private commentsRepository: Repository<Comments>;
+
     constructor() {
-        this.commentsRepository = db_1.default.getRepository(Entities_1.Comments);
+        this.commentsRepository = pool.getRepository(Comments);
     }
-    async createComment(commentData) {
+
+    async createComment(commentData: any): Promise<void> {
         const newComment = this.commentsRepository.create(commentData);
         await this.commentsRepository.save(newComment);
     }
-    async updateComment(commentId, updatedCommentData) {
+
+    async updateComment(commentId: number, updatedCommentData: any): Promise<void> {
         await this.commentsRepository.update(commentId, updatedCommentData);
     }
-    async deleteComment(commentId) {
+
+    async deleteComment(commentId: number): Promise<void> {
         await this.commentsRepository.delete(commentId);
     }
-    async getCommentById(commentId) {
+
+    async getCommentById(commentId: number): Promise<Comments> {
         const comment = await this.commentsRepository.findOne({ where: { CommentID: commentId } });
         if (!comment) {
             throw new Error("Comment not found");
@@ -28,4 +31,6 @@ class CommentModel {
         return comment;
     }
 }
-exports.CommentModel = CommentModel;
+
+export { CommentModel };
+ */ 

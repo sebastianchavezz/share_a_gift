@@ -11,6 +11,7 @@ const pool = new DataSource({
   password: 'root',
   port: 5432,
   entities: ["./src/db/Entities.ts"],
+  migrations: ["./src/migrations/**/*.ts"],
 });
 
 pool.initialize()

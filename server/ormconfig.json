@@ -1,17 +1,17 @@
 {
-    "type": "postgres",
-    "host": "localhost",
-    "port": 5432,
-    "username": "postgres",
-    "password": "root",
-    "database": "share_a_gift",
-    "synchronize": true,
-    "logging": true,
-    "entities": ["src/db/Entities.ts"],
-    "migrations": ["src/migrations/*.ts"],
-    "cli": {
-      "entitiesDir": "src/db",
-      "migrationsDir": "src/migrations"
-    }
+  "type": "postgres",
+  "host": "localhost",
+  "port": 5432,
+  "username": "postgres",
+  "password": "root",
+  "database": "share_a_gift",
+  "synchronize": true,
+  "logging": true,
+  "entities": ["src/db/Entities.ts"],
+  "migrations": ["src/migrations/*.ts"],
+  "cli": {
+    "entitiesDir": "src/db/db",
+    "migrationsDir": "src/migrations",
+    "dataSource": "src/db/db.ts"
   }
-  
+}

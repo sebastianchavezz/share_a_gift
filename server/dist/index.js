@@ -8,7 +8,6 @@ const cors_1 = __importDefault(require("cors"));
 const express_1 = __importDefault(require("express"));
 const UserController_1 = require("./controllers/UserController");
 const PartyController_1 = require("./controllers/PartyController");
-const PresentsController_1 = require("./controllers/PresentsController");
 //import session from 'express-session';
 //import passport from 'passport';
 //import './auth/passportConfig';
@@ -36,10 +35,10 @@ app.put('/update-party/:partyid', (req, res) => (0, PartyController_1.UpdatePart
 app.delete('/delete-party/:partyid', (req, res) => (0, PartyController_1.DeleteParty)(req, res));
 app.get('/getParty-by-user/:userid', (req, res) => (0, PartyController_1.GetPartyByUser)(req, res));
 // Present endpoints
-app.post('/add-present/:partyid', (req, res) => (0, PresentsController_1.AddPresentToParty)(req, res));
-app.get('/getPresents/:partyid', (req, res) => (0, PresentsController_1.GetAllPresents)(req, res));
-app.put('/update-present/:partyid/:presentid', (req, res) => (0, PresentsController_1.UpdatePresent)(req, res));
-app.delete('/delete-present/:partyid/:presentid', (req, res) => (0, PresentsController_1.DeletePresentFromParty)(req, res));
+/* app.post('/add-present/:partyid', (req, res) => AddPresentToParty(req, res));
+app.get('/getPresents/:partyid', (req, res) => GetAllPresents(req, res));
+app.put('/update-present/:partyid/:presentid', (req, res) => UpdatePresent(req, res));
+app.delete('/delete-present/:partyid/:presentid', (req, res) => DeletePresentFromParty(req, res)); */
 // Posts endpoints
 //app.post('/posts', (req, res) => CreatePost(req, res));
 //app.get('/posts/:postId', (req, res) => GetPost(req, res));

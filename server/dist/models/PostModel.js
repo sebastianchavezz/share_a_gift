@@ -1,30 +1,35 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.PostModel = void 0;
-const Entities_1 = require("../db/Entities"); // Assuming the entity for posts is named Post
-const db_1 = __importDefault(require("../db/db"));
+/* import { getRepository, Repository } from 'typeorm';
+import { Posts } from '../db/Entities'; // Assuming the entity for posts is named Post
+import pool from '../db/db';
+
 class PostModel {
+    private postRepository: Repository<Posts>;
+
     constructor() {
-        this.postRepository = db_1.default.getRepository(Entities_1.Posts);
+        this.postRepository = pool.getRepository(Posts);
     }
-    async createPost(postData) {
+
+    async createPost(postData: any): Promise<void> {
         // Logic to create a post (not implemented)
     }
-    async getPostById(postId) {
+
+    async getPostById(postId: number): Promise<Posts> {
         const post = await this.postRepository.findOne({ where: { PostID: postId } });
         if (!post) {
             throw new Error("Post not found");
         }
         return post;
     }
-    async updatePost(postId, updatedPostData) {
+
+    async updatePost(postId: number, updatedPostData: any): Promise<void> {
         // Logic to update a post (not implemented)
     }
-    async deletePost(postId) {
+
+    async deletePost(postId: number): Promise<void> {
         await this.postRepository.delete(postId);
     }
 }
-exports.PostModel = PostModel;
+
+export { PostModel };
+ */ 

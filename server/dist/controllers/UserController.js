@@ -31,7 +31,7 @@ exports.Login = Login;
 const Register = async (req, res) => {
     try {
         console.log('REGISTERING');
-        await userModel.registerUser(req.body);
+        await userModel.addUser(req.body);
         res.status(200).send('User registered Successfully');
     }
     catch (error) {

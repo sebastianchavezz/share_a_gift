@@ -1,29 +1,26 @@
 -- Create the "user" table
 CREATE TABLE IF NOT EXISTS "user" (
-  userID SERIAL PRIMARY KEY,
-  username VARCHAR(50) NOT NULL UNIQUE,
-  Email VARCHAR(100) NOT NULL UNIQUE,
-  Tel VARCHAR(20),
-  Parties INTEGER,
-  Psswrd VARCHAR(100)
+    userID SERIAL PRIMARY KEY,
+    Username VARCHAR(50) UNIQUE,
+    Email VARCHAR(100) UNIQUE NOT NULL,
+    Tel VARCHAR(20),
+    Parties INT DEFAULT 0,
+    Psswrd VARCHAR(100)
 );
 
 -- Create the Party table
 CREATE TABLE IF NOT EXISTS Party (
-  PartyID SERIAL PRIMARY KEY,
-  Occasion VARCHAR(255),
-  DateStart DATE,
-  DateEnd DATE,
-  Messaging VARCHAR(255)
+    PartyID SERIAL PRIMARY KEY,
+    Occasion VARCHAR(255) NOT NULL,
+    DateStart DATE,
+    DateEnd DATE,
+    Messaging VARCHAR(255)
 );
 
--- Link users and Parties (assuming many users can be in one party)
-CREATE TABLE IF NOT EXISTS Partyuser (
-  PartyID INTEGER NOT NULL,
-  userID INTEGER NOT NULL,
-  PRIMARY KEY (PartyID, userID),
-  FOREIGN KEY (PartyID) REFERENCES Party(PartyID),
-  FOREIGN KEY (userID) REFERENCES "user"(userID)
+CREATE TABLE IF NOT EXISTS user_parties_party (
+    userUserid INT REFERENCES "user"(userID),
+    partyPartyid INT REFERENCES Party(PartyID),
+    PRIMARY KEY (userUserid, partyPartyid)
 );
 
 -- Create the Present table
