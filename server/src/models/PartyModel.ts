@@ -24,7 +24,7 @@ class PartyModel {
         newParty.Occasion = occasion;
         newParty.DateStart = date;
         newParty.DateEnd = date;
-        newParty.Messaging = '';
+        newParty.Description = '';
     
         // Create an array to store User objects
         const usersArray: User[] = [requestingUser]; // Include the requesting user
@@ -99,7 +99,7 @@ class PartyModel {
             user = new User();
             user.Email = email;
             // here we send an email if it doesnt have an account yet
-            //Warning: Check if this is good later on
+            //Warning: Check ifthis is good later on
             mailToRegister(email); 
             await this.userRepository.save(user);
         }

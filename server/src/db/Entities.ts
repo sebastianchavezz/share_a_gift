@@ -9,6 +9,12 @@ class User extends BaseEntity {
   @PrimaryGeneratedColumn({name:'userid'})
   UserID!: number;
 
+  @Column({name:'naam', length: 50, nullable: true})
+  Naam!: string;
+
+  @Column({name:'achterNaam', length: 50, nullable: true})
+  AchterNaam!: string;
+
   @Column({name:'username', length: 50, unique: true, nullable: true })
   Username!: string;
 
@@ -44,14 +50,13 @@ class Party extends BaseEntity{
   @Column({name:'dateend'})
   DateEnd: Date;
 
-  @Column({name:'messaging', length: 255, nullable: true })
-  Messaging: string;
+  @Column({name:'description', length: 255, nullable: true })
+  Description: string;
 
   @ManyToMany(() => User, (user) => user.parties, {
     cascade: true,
   })
   users: User[];
-
 }
 
 /* 
