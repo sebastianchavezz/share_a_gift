@@ -22,7 +22,7 @@ class PartyModel {
         newParty.Occasion = occasion;
         newParty.DateStart = date;
         newParty.DateEnd = date;
-        newParty.Messaging = '';
+        newParty.Description = '';
         // Create an array to store User objects
         const usersArray = [requestingUser]; // Include the requesting user
         // Populate usersArray with User objects for each user in the partyData
@@ -44,6 +44,7 @@ class PartyModel {
     }
     async getPartyByUser(userIdInput) {
         const userId = parseInt(userIdInput, 10);
+        // TODO: data validation inside the Controller Please
         if (isNaN(userId)) {
             throw new Error('Invalid user ID. Please provide a valid integer.');
         }
@@ -78,7 +79,7 @@ class PartyModel {
             user = new Entities_1.User();
             user.Email = email;
             // here we send an email if it doesnt have an account yet
-            //Warning: Check if this is good later on
+            //Warning: Check ifthis is good later on
             (0, Mailer_1.mailToRegister)(email);
             await this.userRepository.save(user);
         }

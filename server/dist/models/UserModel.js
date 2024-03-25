@@ -27,6 +27,7 @@ class UserModel {
         const hashedPassword = userData.password;
         const newUser = this.userRepository.create({
             Username: userData.username, Email: userData.email,
+            Naam: userData.naam, AchterNaam: userData.achterNaam,
             Tel: userData.tel,
             Psswrd: hashedPassword,
             //AddressID: userData.addressId,

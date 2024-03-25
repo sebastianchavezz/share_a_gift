@@ -56,6 +56,7 @@ class PartyModel {
     async getPartyByUser(userIdInput: any): Promise<Party[]> {
         const userId = parseInt(userIdInput, 10);
 
+        // TODO: data validation inside the Controller Please
         if (isNaN(userId)) {
             throw new Error('Invalid user ID. Please provide a valid integer.');
         }

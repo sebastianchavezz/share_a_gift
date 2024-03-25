@@ -21,6 +21,14 @@ __decorate([
     __metadata("design:type", Number)
 ], User.prototype, "UserID", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ name: 'naam', length: 50, nullable: true }),
+    __metadata("design:type", String)
+], User.prototype, "Naam", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ name: 'achterNaam', length: 50, nullable: true }),
+    __metadata("design:type", String)
+], User.prototype, "AchterNaam", void 0);
+__decorate([
     (0, typeorm_1.Column)({ name: 'username', length: 50, unique: true, nullable: true }),
     __metadata("design:type", String)
 ], User.prototype, "Username", void 0);
@@ -68,9 +76,9 @@ __decorate([
     __metadata("design:type", Date)
 ], Party.prototype, "DateEnd", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ name: 'messaging', length: 255, nullable: true }),
+    (0, typeorm_1.Column)({ name: 'description', length: 255, nullable: true }),
     __metadata("design:type", String)
-], Party.prototype, "Messaging", void 0);
+], Party.prototype, "Description", void 0);
 __decorate([
     (0, typeorm_1.ManyToMany)(() => User, (user) => user.parties, {
         cascade: true,

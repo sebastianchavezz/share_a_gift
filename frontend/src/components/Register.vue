@@ -41,6 +41,8 @@ export default {
           email: this.email,
           password: this.password,
           tel: this.tel,
+          //add achternaam
+          //add naam
         });
         // Registration successful, handle redirect or display a success message
         console.log('Registration successful');
