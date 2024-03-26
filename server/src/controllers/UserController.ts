@@ -2,6 +2,7 @@
 import { Request, Response } from "express";
 import { UserModel } from "../models/UserModel";
 import jwt from 'jsonwebtoken';
+import fs from 'fs';
 
 const userModel = new UserModel();
 
@@ -80,6 +81,28 @@ export const DeleteUser = async (req: Request, res: Response): Promise<void> => 
         res.status(200).send('User deleted Successfully');
     } catch (error) {
         console.error("Error deleting user:", error);
+        res.status(500).send("Internal Server Error");
+    }
+};
+export const GetPicture= async (req: Request, res: Response): Promise<void> => {
+    try {
+        const user=  await userModel.getUserById(req.params.userid);
+        const data = user.ImageData;
+        res.status(200).send(data);
+    } catch (error) {
+        console.error("Error updating user:", error);
+        res.status(500).send("Internal Server Error");
+    }
+};
+
+
+export const CommitPicture = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const imageBuffer = req.file?.buffer;
+        await userModel.CommitPicture(req.params.userid, imageBuffer);
+        res.status(200).send('Picture updated Successfully');
+    } catch (error) {
+        console.error("Error updating user:", error);
         res.status(500).send("Internal Server Error");
     }
 };

@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DeleteUser = exports.UpdateUser = exports.GetUser = exports.Register = exports.Login = void 0;
+exports.CommitPicture = exports.GetPicture = exports.DeleteUser = exports.UpdateUser = exports.GetUser = exports.Register = exports.Login = void 0;
 const UserModel_1 = require("../models/UserModel");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const userModel = new UserModel_1.UserModel();
@@ -90,3 +90,27 @@ const DeleteUser = async (req, res) => {
     }
 };
 exports.DeleteUser = DeleteUser;
+const GetPicture = async (req, res) => {
+    try {
+        const user = await userModel.getUserById(req.params.userid);
+        const data = user.ImageData;
+        res.status(200).send(data);
+    }
+    catch (error) {
+        console.error("Error updating user:", error);
+        res.status(500).send("Internal Server Error");
+    }
+};
+exports.GetPicture = GetPicture;
+const CommitPicture = async (req, res) => {
+    try {
+        const imageBuffer = req.file?.buffer;
+        await userModel.CommitPicture(req.params.userid, imageBuffer);
+        res.status(200).send('Picture updated Successfully');
+    }
+    catch (error) {
+        console.error("Error updating user:", error);
+        res.status(500).send("Internal Server Error");
+    }
+};
+exports.CommitPicture = CommitPicture;

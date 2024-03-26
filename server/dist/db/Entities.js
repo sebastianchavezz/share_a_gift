@@ -49,6 +49,10 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "Psswrd", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ name: 'profilePicture', type: 'bytea', nullable: true }),
+    __metadata("design:type", Buffer)
+], User.prototype, "ImageData", void 0);
+__decorate([
     (0, typeorm_1.ManyToMany)(() => Party, (party) => party.users),
     (0, typeorm_1.JoinTable)(),
     __metadata("design:type", Array)
@@ -79,6 +83,10 @@ __decorate([
     (0, typeorm_1.Column)({ name: 'description', length: 255, nullable: true }),
     __metadata("design:type", String)
 ], Party.prototype, "Description", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ name: 'image', type: 'bytea', nullable: true }),
+    __metadata("design:type", Buffer)
+], Party.prototype, "ImageData", void 0);
 __decorate([
     (0, typeorm_1.ManyToMany)(() => User, (user) => user.parties, {
         cascade: true,

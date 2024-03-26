@@ -60,5 +60,14 @@ class UserModel {
         }
         return user;
     }
+    async CommitPicture(userid, picture) {
+        const id = parseInt(userid, 10);
+        const user = await this.userRepository.findOne({ where: { UserID: id } });
+        if (!user) {
+            throw new Error('User not found');
+        }
+        user.ImageData = picture;
+        await this.userRepository.save(user);
+    }
 }
 exports.UserModel = UserModel;

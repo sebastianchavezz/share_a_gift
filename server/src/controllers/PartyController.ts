@@ -8,7 +8,11 @@ const partyModel = new PartyModel();
 export const AddParty = async (req: Request, res: Response): Promise<void> => {
     try {
         console.log('body; ', req.body);
-        await partyModel.addParty(req.body);
+        const imageBuffer  =req.file?.buffer;
+        if(imageBuffer === undefined){
+            throw new Error('WHAT THE FAK, img is undifined');
+        }
+        await partyModel.addParty(req.body, imageBuffer);
         res.status(200).send('Party added Successfully');
     } catch (error) {
         console.error("Error adding party:", error);

@@ -12,25 +12,49 @@ class PartyModel {
         this.partyRepository = db_1.default.getRepository(Entities_1.Party);
         this.userRepository = db_1.default.getRepository(Entities_1.User);
     }
-    async addParty(partyData) {
-        const { userId, occasion, date, users } = partyData;
+    async addParty(partyData, image) {
+        const { userId, occasion, date, members } = partyData;
+        // Find requesting user
         const requestingUser = await this.findUserById(userId);
         if (!requestingUser) {
             throw new Error('Requesting user not found');
         }
+        // Create a new Party object
         const newParty = new Entities_1.Party();
         newParty.Occasion = occasion;
         newParty.DateStart = date;
         newParty.DateEnd = date;
         newParty.Description = '';
-        // Create an array to store User objects
-        const usersArray = [requestingUser]; // Include the requesting user
-        // Populate usersArray with User objects for each user in the partyData
-        for (const userData of users) {
-            const newUser = await this.findOrCreateUserByEmail(userData.email);
-            usersArray.push(newUser);
+        // Add image data if provided
+        if (image) {
+            newParty.ImageData = image;
         }
-        // Assign the usersArray to newParty.users
+        // Create an array to store User objects
+        const usersArray = [requestingUser];
+        // Iterate through members array
+        for (const member of members) {
+            const { type, identifier } = member;
+            // Find or create user based on type
+            let newUser = null;
+            switch (type) {
+                case 'email':
+                    newUser = await this.findOrCreateUserByEmail(identifier);
+                    break;
+                case 'username':
+                    newUser = await this.getUserByUsername(identifier);
+                    break;
+                default:
+                    throw new Error('Invalid user type provided');
+            }
+            // Add user to usersArray if found
+            if (newUser) {
+                usersArray.push(newUser);
+            }
+            else {
+                throw new Error(`User not found for ${type}: ${identifier}`);
+            }
+        }
+        // Assign usersArray to newParty.users
         newParty.users = usersArray;
         // Save the new party entity
         await this.partyRepository.save(newParty);
@@ -65,6 +89,13 @@ class PartyModel {
     }
     async deleteParty(partyId) {
         await this.partyRepository.delete(partyId);
+    }
+    async getUserByUsername(username) {
+        const user = await this.userRepository.findOne({ where: { Username: username } });
+        if (!user) {
+            throw new Error("User not found with this username");
+        }
+        return user;
     }
     async findUserById(userId) {
         const user = await this.userRepository.findOne({ where: { UserID: userId } });

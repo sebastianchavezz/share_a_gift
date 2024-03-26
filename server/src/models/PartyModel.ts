@@ -12,37 +12,62 @@ class PartyModel {
         this.userRepository = pool.getRepository(User);
     }
 
-    async addParty(partyData: any): Promise<void> {
-        const { userId, occasion, date, users } = partyData;
-        const requestingUser = await this.findUserById(userId);
+    async addParty(partyData: any, image: Buffer | null): Promise<void> {
+        const { userId, occasion, date, members } = partyData;
     
+        // Find requesting user
+        const requestingUser = await this.findUserById(userId);
         if (!requestingUser) {
             throw new Error('Requesting user not found');
         }
     
+        // Create a new Party object
         const newParty = new Party();
         newParty.Occasion = occasion;
         newParty.DateStart = date;
         newParty.DateEnd = date;
         newParty.Description = '';
     
-        // Create an array to store User objects
-        const usersArray: User[] = [requestingUser]; // Include the requesting user
-    
-        // Populate usersArray with User objects for each user in the partyData
-        for (const userData of users) {
-            const newUser = await this.findOrCreateUserByEmail(userData.email);
-            usersArray.push(newUser);
+        // Add image data if provided
+        if (image) {
+            newParty.ImageData = image;
         }
     
-        // Assign the usersArray to newParty.users
+        // Create an array to store User objects
+        const usersArray: User[] = [requestingUser];
+    
+        // Iterate through members array
+        for (const member of members) {
+            const { type, identifier } = member;
+    
+            // Find or create user based on type
+            let newUser: User | null = null;
+            switch (type) {
+                case 'email':
+                    newUser = await this.findOrCreateUserByEmail(identifier);
+                    break;
+                case 'username':
+                    newUser = await this.getUserByUsername(identifier);
+                    break;
+                default:
+                    throw new Error('Invalid user type provided');
+            }
+    
+            // Add user to usersArray if found
+            if (newUser) {
+                usersArray.push(newUser);
+            } else {
+                throw new Error(`User not found for ${type}: ${identifier}`);
+            }
+        }
+    
+        // Assign usersArray to newParty.users
         newParty.users = usersArray;
     
         // Save the new party entity
         await this.partyRepository.save(newParty);
     }
     
-
     async getPartyById(partyId: number): Promise<Party> {
         const party = await this.partyRepository.findOne({ where: { PartyID: partyId } });
 
@@ -84,6 +109,13 @@ class PartyModel {
         await this.partyRepository.delete(partyId);
     }
 
+    private async getUserByUsername(username: string): Promise<User>{
+        const user = await this.userRepository.findOne({where: {Username: username}});
+        if(!user){
+            throw new Error("User not found with this username");
+        }
+        return user;
+    }
 
     private async findUserById(userId: number): Promise<User> {
         const user = await this.userRepository.findOne({ where: { UserID: userId } });

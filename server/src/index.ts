@@ -1,9 +1,10 @@
 // src/index.ts
 import  cors from 'cors';
 import express, { Request, Response} from 'express';
-import {GetUser, Login, Register, DeleteUser, UpdateUser} from './controllers/UserController';
+import {GetUser, Login, Register, DeleteUser, UpdateUser, CommitPicture, GetPicture} from './controllers/UserController';
 import {AddParty, AddUserToParty, GetParty, DeleteParty, UpdateParty, GetPartyByUser} from './controllers/PartyController';
 import { verifyToken } from './middleware/auth';
+import multer from 'multer';
 
 //import session from 'express-session';
 //import passport from 'passport';
@@ -12,6 +13,8 @@ import { verifyToken } from './middleware/auth';
 const app = express();
 app.use(cors());
 const port = 3001;
+const storage = multer.memoryStorage();
+const upload = multer({storage: storage});
 
 app.use(express.json());
 //app.use(session({ secret: 'c3728b36f425fb184f8f91b06b8293eb19f3f837e21b65a8172dfe80bebdd00c', resave: false, saveUninitialized: false }));
@@ -25,12 +28,14 @@ app.get('/', (req, res) => {
 // User endpoints
 app.post('/login', (req, res) => Login(req, res));
 app.post('/register', (req, res) => Register(req, res));
+app.post('/upload-image/:userid',verifyToken, upload.single('image'),(req, res) => CommitPicture(req, res));
+app.get('/profile-image/:userid', verifyToken, (req, res) => GetPicture(req, res));
 app.get('/get-user/:userid', verifyToken,(req, res) => GetUser(req, res));
 app.put('/update-user/:userid', (req, res) => UpdateUser(req, res));
 app.delete('/delete-user/:userid', (req, res) => DeleteUser(req, res));
 
 // Party endpoints
-app.post('/add-party', (req, res) => AddParty(req, res));
+app.post('/add-party',verifyToken, upload.single('image'),(req, res) => AddParty(req, res));
 app.get('/get-party', (req, res) => GetParty(req, res));
 app.post('/add-user/:partyid', (req, res) => AddUserToParty(req, res));
 app.put('/update-party/:partyid', (req, res) => UpdateParty(req, res));

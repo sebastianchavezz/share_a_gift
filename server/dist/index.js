@@ -9,12 +9,15 @@ const express_1 = __importDefault(require("express"));
 const UserController_1 = require("./controllers/UserController");
 const PartyController_1 = require("./controllers/PartyController");
 const auth_1 = require("./middleware/auth");
+const multer_1 = __importDefault(require("multer"));
 //import session from 'express-session';
 //import passport from 'passport';
 //import './auth/passportConfig';
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)());
 const port = 3001;
+const storage = multer_1.default.memoryStorage();
+const upload = (0, multer_1.default)({ storage: storage });
 app.use(express_1.default.json());
 //app.use(session({ secret: 'c3728b36f425fb184f8f91b06b8293eb19f3f837e21b65a8172dfe80bebdd00c', resave: false, saveUninitialized: false }));
 //app.use(passport.initialize());
@@ -25,11 +28,13 @@ app.get('/', (req, res) => {
 // User endpoints
 app.post('/login', (req, res) => (0, UserController_1.Login)(req, res));
 app.post('/register', (req, res) => (0, UserController_1.Register)(req, res));
+app.post('/upload-image/:userid', auth_1.verifyToken, upload.single('image'), (req, res) => (0, UserController_1.CommitPicture)(req, res));
+app.get('/profile-image/:userid', auth_1.verifyToken, (req, res) => (0, UserController_1.GetPicture)(req, res));
 app.get('/get-user/:userid', auth_1.verifyToken, (req, res) => (0, UserController_1.GetUser)(req, res));
 app.put('/update-user/:userid', (req, res) => (0, UserController_1.UpdateUser)(req, res));
 app.delete('/delete-user/:userid', (req, res) => (0, UserController_1.DeleteUser)(req, res));
 // Party endpoints
-app.post('/add-party', (req, res) => (0, PartyController_1.AddParty)(req, res));
+app.post('/add-party', auth_1.verifyToken, upload.single('image'), (req, res) => (0, PartyController_1.AddParty)(req, res));
 app.get('/get-party', (req, res) => (0, PartyController_1.GetParty)(req, res));
 app.post('/add-user/:partyid', (req, res) => (0, PartyController_1.AddUserToParty)(req, res));
 app.put('/update-party/:partyid', (req, res) => (0, PartyController_1.UpdateParty)(req, res));

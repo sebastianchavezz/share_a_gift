@@ -30,6 +30,9 @@ class User extends BaseEntity {
   @Column({name:'psswrd', length: 100, nullable: true })
   Psswrd!: string;
 
+  @Column({name: 'profilePicture', type:'bytea', nullable:true})
+  ImageData: Buffer;
+
   @ManyToMany(() => Party, (party) => party.users)
   @JoinTable()
   parties!: Party[];
@@ -52,6 +55,9 @@ class Party extends BaseEntity{
 
   @Column({name:'description', length: 255, nullable: true })
   Description: string;
+
+  @Column({name: 'image', type:'bytea', nullable:true})
+  ImageData: Buffer;
 
   @ManyToMany(() => User, (user) => user.parties, {
     cascade: true,
