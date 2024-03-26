@@ -3,6 +3,7 @@ import  cors from 'cors';
 import express, { Request, Response} from 'express';
 import {GetUser, Login, Register, DeleteUser, UpdateUser} from './controllers/UserController';
 import {AddParty, AddUserToParty, GetParty, DeleteParty, UpdateParty, GetPartyByUser} from './controllers/PartyController';
+import { verifyToken } from './middleware/auth';
 
 //import session from 'express-session';
 //import passport from 'passport';
@@ -24,7 +25,7 @@ app.get('/', (req, res) => {
 // User endpoints
 app.post('/login', (req, res) => Login(req, res));
 app.post('/register', (req, res) => Register(req, res));
-app.get('/get-user', (req, res) => GetUser(req, res));
+app.get('/get-user/:userid', verifyToken,(req, res) => GetUser(req, res));
 app.put('/update-user/:userid', (req, res) => UpdateUser(req, res));
 app.delete('/delete-user/:userid', (req, res) => DeleteUser(req, res));
 

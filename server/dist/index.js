@@ -8,6 +8,7 @@ const cors_1 = __importDefault(require("cors"));
 const express_1 = __importDefault(require("express"));
 const UserController_1 = require("./controllers/UserController");
 const PartyController_1 = require("./controllers/PartyController");
+const auth_1 = require("./middleware/auth");
 //import session from 'express-session';
 //import passport from 'passport';
 //import './auth/passportConfig';
@@ -24,7 +25,7 @@ app.get('/', (req, res) => {
 // User endpoints
 app.post('/login', (req, res) => (0, UserController_1.Login)(req, res));
 app.post('/register', (req, res) => (0, UserController_1.Register)(req, res));
-app.get('/get-user', (req, res) => (0, UserController_1.GetUser)(req, res));
+app.get('/get-user/:userid', auth_1.verifyToken, (req, res) => (0, UserController_1.GetUser)(req, res));
 app.put('/update-user/:userid', (req, res) => (0, UserController_1.UpdateUser)(req, res));
 app.delete('/delete-user/:userid', (req, res) => (0, UserController_1.DeleteUser)(req, res));
 // Party endpoints

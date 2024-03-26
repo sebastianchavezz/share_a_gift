@@ -12,6 +12,7 @@ class UserModel {
     }
     async loginUser(username, password) {
         // Logic to find and validate user credentials (not implemented)
+        console.log('user inside the Login', username);
         const user = await this.userRepository.findOne({ where: { Username: username } });
         if (!user) {
             throw new Error("User not found");
@@ -25,6 +26,7 @@ class UserModel {
     async addUser(userData) {
         //TODO: check if email already in use
         const hashedPassword = userData.password;
+        console.log('userdata: ', userData);
         const newUser = this.userRepository.create({
             Username: userData.username, Email: userData.email,
             Naam: userData.naam, AchterNaam: userData.achterNaam,
@@ -34,8 +36,11 @@ class UserModel {
         });
         await this.userRepository.save(newUser);
     }
-    async getUserById(userId) {
-        const user = await this.userRepository.findOne({ where: { UserID: userId } });
+    async getUserById(userid) {
+        console.log('userId inside Model', userid);
+        console.log(typeof userid);
+        const id = parseInt(userid, 10);
+        const user = await this.userRepository.findOne({ where: { UserID: id } });
         if (!user) {
             throw new Error('User not Found');
         }
