@@ -13,7 +13,7 @@ class PartyModel {
     }
 
     async addParty(partyData: any, image: Buffer | null): Promise<void> {
-        const { userId, occasion, date, members } = partyData;
+        const { userId, name,occasion, date, members } = partyData;
     
         // Find requesting user
         const requestingUser = await this.findUserById(userId);
@@ -24,6 +24,7 @@ class PartyModel {
         // Create a new Party object
         const newParty = new Party();
         newParty.Occasion = occasion;
+        newParty.Name = name,
         newParty.DateStart = date;
         newParty.DateEnd = date;
         newParty.Description = '';
@@ -68,24 +69,23 @@ class PartyModel {
         await this.partyRepository.save(newParty);
     }
     
-    async getPartyById(partyId: number): Promise<Party> {
-        const party = await this.partyRepository.findOne({ where: { PartyID: partyId } });
-
+    async getPartyById(partyId: string): Promise<Party> {
+        const id = parseInt(partyId, 10);
+        const party = await this.partyRepository.findOne({ where: { PartyID: id } });
         if (!party) {
             throw new Error("Party not found");
         }
-
         return party;
     }
 
-    async getPartyByUser(userIdInput: any): Promise<Party[]> {
+    async getPartyByUser(userIdInput: string): Promise<Party[]> {
         const userId = parseInt(userIdInput, 10);
-
+        console.log('getting the parties for user:', userId);
+        
         // TODO: data validation inside the Controller Please
         if (isNaN(userId)) {
             throw new Error('Invalid user ID. Please provide a valid integer.');
         }
-    
         const user = await this.userRepository.findOne({ 
             where: { UserID: userId }, 
             relations: ['parties'] 

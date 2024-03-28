@@ -22,8 +22,7 @@ export const AddParty = async (req: Request, res: Response): Promise<void> => {
 
 export const GetParty = async (req: Request, res: Response): Promise<void> => {
     try {
-        const partyId = parseInt(req.params.partyId); // Assuming partyId is passed in the request parameters
-        const party = await partyModel.getPartyById(partyId);
+        const party =await partyModel.getPartyById(req.params.partyid);
         if (party) {
             res.status(200).json(party);
         } else {
@@ -38,11 +37,16 @@ export const GetParty = async (req: Request, res: Response): Promise<void> => {
 export const GetPartyByUser = async (req: Request, res: Response): Promise<void> => {
     try {
         console.log("request body input:", req.params.userid);
-        const userId = parseInt(req.params.userid, 10); // Assuming partyId is passed in the request parameters
-        const party = await partyModel.getPartyByUser(userId);
-        const parties_list = party.map(p => p.Occasion);
+        const parties = await partyModel.getPartyByUser(req.params.userid);
+        const parties_list = parties.map(party => ({
+            partyid: party.PartyID,
+            name : party.Name,
+            occasion: party.Occasion,
+            dateend: party.DateEnd
+        }));
+
         console.log('parties: ',parties_list);
-        if (party) {
+        if (parties_list) {
             res.status(200).json(parties_list);
         } else {
             res.status(404).send("Party not found");

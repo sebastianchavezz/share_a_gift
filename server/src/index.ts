@@ -11,7 +11,12 @@ import multer from 'multer';
 //import './auth/passportConfig';
 
 const app = express();
-app.use(cors());
+app.use(cors(
+  {
+    origin:'*', 
+    credentials:true,            //access-control-allow-credentials:true
+  }
+));
 const port = 3001;
 const storage = multer.memoryStorage();
 const upload = multer({storage: storage});
@@ -36,7 +41,7 @@ app.delete('/delete-user/:userid', (req, res) => DeleteUser(req, res));
 
 // Party endpoints
 app.post('/add-party',verifyToken, upload.single('image'),(req, res) => AddParty(req, res));
-app.get('/get-party', (req, res) => GetParty(req, res));
+app.get('/get-party/:partyid', (req, res) => GetParty(req, res));
 app.post('/add-user/:partyid', (req, res) => AddUserToParty(req, res));
 app.put('/update-party/:partyid', (req, res) => UpdateParty(req, res));
 app.delete('/delete-party/:partyid', (req, res) => DeleteParty(req, res));
@@ -76,6 +81,7 @@ app.delete('/delete-present/:partyid/:presentid', (req, res) => DeletePresentFro
 //app.post('/conversations/:conversationId/messages', (req, res) => SendMessage(req, res));
 //app.get('/conversations/:conversationId/messages', (req, res) => GetMessages(req, res));
 
+app.use(express.json());
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);
 });

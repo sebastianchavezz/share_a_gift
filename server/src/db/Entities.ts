@@ -44,6 +44,9 @@ class Party extends BaseEntity{
   @PrimaryGeneratedColumn({name:'partyid'})
   PartyID: number;
 
+  @Column({name:'name', length: 255, nullable:true})
+  Name: string;
+
   @Column({name:'occasion', length: 255 })
   Occasion: string;
 

@@ -68,6 +68,10 @@ __decorate([
     __metadata("design:type", Number)
 ], Party.prototype, "PartyID", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ name: 'name', length: 255, nullable: true }),
+    __metadata("design:type", String)
+], Party.prototype, "Name", void 0);
+__decorate([
     (0, typeorm_1.Column)({ name: 'occasion', length: 255 }),
     __metadata("design:type", String)
 ], Party.prototype, "Occasion", void 0);
