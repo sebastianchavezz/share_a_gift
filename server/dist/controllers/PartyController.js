@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DeleteParty = exports.UpdateParty = exports.AddUserToParty = exports.GetPartyByUser = exports.GetParty = exports.AddParty = void 0;
+exports.UpdatePicture = exports.DeleteParty = exports.UpdateParty = exports.AddUserToParty = exports.GetPartyByUser = exports.GetParty = exports.AddParty = void 0;
 const PartyModel_1 = require("../models/PartyModel");
 const partyModel = new PartyModel_1.PartyModel();
 //TODO: data validation in every CONTROLLERS
@@ -9,9 +9,11 @@ const AddParty = async (req, res) => {
         console.log('body; ', req.body);
         const imageBuffer = req.file?.buffer;
         if (imageBuffer === undefined) {
-            throw new Error('WHAT THE FAK, img is undifined');
+            await partyModel.addParty(req.body, null);
         }
-        await partyModel.addParty(req.body, imageBuffer);
+        else {
+            await partyModel.addParty(req.body, imageBuffer);
+        }
         res.status(200).send('Party added Successfully');
     }
     catch (error) {
@@ -24,7 +26,16 @@ const GetParty = async (req, res) => {
     try {
         const party = await partyModel.getPartyById(req.params.partyid);
         if (party) {
-            res.status(200).json(party);
+            const partyMembers = party.users ? party.users.map((user) => user.Username || user.Email) : [];
+            const data = {
+                name: party.Name,
+                occasion: party.Occasion,
+                date: party.DateEnd,
+                image: party.ImageData,
+                description: party.Description,
+                members: partyMembers
+            };
+            res.status(200).json(data);
         }
         else {
             res.status(404).send("Party not found");
@@ -75,8 +86,7 @@ const AddUserToParty = async (req, res) => {
 exports.AddUserToParty = AddUserToParty;
 const UpdateParty = async (req, res) => {
     try {
-        const partyId = parseInt(req.params.partyId); // Assuming partyId is passed in the request parameters
-        await partyModel.updateParty(partyId, req.body);
+        await partyModel.updateParty(req.params.partyid, req.body);
         res.status(200).send('Party updated Successfully');
     }
     catch (error) {
@@ -97,3 +107,15 @@ const DeleteParty = async (req, res) => {
     }
 };
 exports.DeleteParty = DeleteParty;
+const UpdatePicture = async (req, res) => {
+    try {
+        const imageBuffer = req.file?.buffer;
+        await partyModel.updatePicture(req.params.partyid, imageBuffer);
+        res.status(200).send('Picture updated Successfully');
+    }
+    catch (error) {
+        console.error("Error updating user:", error);
+        res.status(500).send("Internal Server Error");
+    }
+};
+exports.UpdatePicture = UpdatePicture;

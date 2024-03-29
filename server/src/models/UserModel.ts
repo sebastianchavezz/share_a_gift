@@ -74,6 +74,13 @@ class UserModel {
         user.ImageData = picture;
         await this.userRepository.save(user);
     }
+    async searchUsers(query: any): Promise<User[]> {
+        // Implement logic to search users based on the query
+        const users = await this.userRepository.createQueryBuilder("user")
+          .where("user.Username LIKE :query OR user.Email LIKE :query", { query: `%${query}%` })
+          .getMany();
+        return users;
+      }
 
 }
 

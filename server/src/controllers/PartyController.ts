@@ -1,6 +1,8 @@
 //src/controllers/PartyController.ts
 import { Request, Response } from "express";
 import { PartyModel } from "../models/PartyModel";
+import {User} from "../db/Entities"
+
 
 const partyModel = new PartyModel();
 
@@ -8,11 +10,12 @@ const partyModel = new PartyModel();
 export const AddParty = async (req: Request, res: Response): Promise<void> => {
     try {
         console.log('body; ', req.body);
-        const imageBuffer  =req.file?.buffer;
+        const imageBuffer = req.file?.buffer;
         if(imageBuffer === undefined){
-            throw new Error('WHAT THE FAK, img is undifined');
+            await partyModel.addParty(req.body, null);
+        }else{
+            await partyModel.addParty(req.body, imageBuffer);
         }
-        await partyModel.addParty(req.body, imageBuffer);
         res.status(200).send('Party added Successfully');
     } catch (error) {
         console.error("Error adding party:", error);
@@ -24,7 +27,17 @@ export const GetParty = async (req: Request, res: Response): Promise<void> => {
     try {
         const party =await partyModel.getPartyById(req.params.partyid);
         if (party) {
-            res.status(200).json(party);
+            const partyMembers = party.users ? party.users.map((user: User) => user.Username || user.Email): [];
+
+            const data = {
+                name : party.Name,
+                occasion : party.Occasion,
+                date : party.DateEnd,
+                image : party.ImageData,
+                description : party.Description,
+                members : partyMembers
+            }
+            res.status(200).json(data);
         } else {
             res.status(404).send("Party not found");
         }
@@ -71,8 +84,7 @@ export const AddUserToParty = async (req: Request, res: Response): Promise<void>
 
 export const UpdateParty = async (req: Request, res: Response): Promise<void> => {
     try {
-        const partyId = parseInt(req.params.partyId); // Assuming partyId is passed in the request parameters
-        await partyModel.updateParty(partyId, req.body);
+        await partyModel.updateParty(req.params.partyid, req.body);
         res.status(200).send('Party updated Successfully');
     } catch (error) {
         console.error("Error updating party:", error);
@@ -90,3 +102,15 @@ export const DeleteParty = async (req: Request, res: Response): Promise<void> =>
         res.status(500).send("Internal Server Error");
     }
 };
+
+export const UpdatePicture = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const imageBuffer = req.file?.buffer;
+        await partyModel.updatePicture(req.params.partyid, imageBuffer);
+        res.status(200).send('Picture updated Successfully');
+    } catch (error) {
+        console.error("Error updating user:", error);
+        res.status(500).send("Internal Server Error");
+    }
+};
+

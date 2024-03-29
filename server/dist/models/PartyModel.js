@@ -88,10 +88,51 @@ class PartyModel {
         // Logic to add a user to a party (not implemented)
     }
     async updateParty(partyId, updatedPartyData) {
-        // Logic to update a party (not implemented)
+        try {
+            // Parse partyId to integer
+            const id = parseInt(partyId, 10);
+            // Find the party by ID
+            const party = await this.partyRepository.findOne({ where: { PartyID: id } });
+            // If party not found, throw error
+            if (!party) {
+                throw new Error('No party with this ID');
+            }
+            if (updatedPartyData.name) {
+                party.Name = updatedPartyData.name;
+            }
+            if (updatedPartyData.occasion) {
+                party.Occasion = updatedPartyData.occasion;
+            }
+            if (updatedPartyData.date) {
+                party.DateEnd = updatedPartyData.date;
+            }
+            if (updatedPartyData.description) {
+                party.Description = updatedPartyData.description;
+            }
+            if (updatedPartyData.image) {
+                party.ImageData = updatedPartyData.image;
+            }
+            // Save the updated party data
+            await this.partyRepository.save(party);
+        }
+        catch (error) {
+            // Handle error
+            console.error('Error updating party:', error);
+            throw new Error('Failed to update party');
+        }
     }
     async deleteParty(partyId) {
         await this.partyRepository.delete(partyId);
+    }
+    async updatePicture(partyid, picture) {
+        const id = parseInt(partyid, 10);
+        console.log('id: ', id);
+        const party = await this.partyRepository.findOne({ where: { PartyID: id } });
+        if (!party) {
+            throw new Error('Party Not Found');
+        }
+        party.ImageData = picture;
+        await this.partyRepository.save(party);
     }
     async getUserByUsername(username) {
         const user = await this.userRepository.findOne({ where: { Username: username } });

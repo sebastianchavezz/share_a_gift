@@ -33,7 +33,10 @@ app.post('/login', (req, res) => (0, UserController_1.Login)(req, res));
 app.post('/register', (req, res) => (0, UserController_1.Register)(req, res));
 app.post('/upload-image/:userid', auth_1.verifyToken, upload.single('image'), (req, res) => (0, UserController_1.CommitPicture)(req, res));
 app.get('/profile-image/:userid', auth_1.verifyToken, (req, res) => (0, UserController_1.GetPicture)(req, res));
+app.get('/otherprofile-image/:userid', (req, res) => (0, UserController_1.GetPicture)(req, res));
 app.get('/get-user/:userid', auth_1.verifyToken, (req, res) => (0, UserController_1.GetUser)(req, res));
+app.get('/get-profile/:userid', (req, res) => (0, UserController_1.GetUser)(req, res));
+app.get('/search/users', async (req, res) => (0, UserController_1.SearchUsers)(req, res));
 app.put('/update-user/:userid', (req, res) => (0, UserController_1.UpdateUser)(req, res));
 app.delete('/delete-user/:userid', (req, res) => (0, UserController_1.DeleteUser)(req, res));
 // Party endpoints
@@ -41,12 +44,14 @@ app.post('/add-party', auth_1.verifyToken, upload.single('image'), (req, res) =>
 app.get('/get-party/:partyid', (req, res) => (0, PartyController_1.GetParty)(req, res));
 app.post('/add-user/:partyid', (req, res) => (0, PartyController_1.AddUserToParty)(req, res));
 app.put('/update-party/:partyid', (req, res) => (0, PartyController_1.UpdateParty)(req, res));
+app.post('/update-party-picture/:partyid', upload.single('image'), (req, res) => (0, PartyController_1.UpdatePicture)(req, res));
 app.delete('/delete-party/:partyid', (req, res) => (0, PartyController_1.DeleteParty)(req, res));
 app.get('/getParty-by-user/:userid', (req, res) => (0, PartyController_1.GetPartyByUser)(req, res));
 // Present endpoints
 /* app.post('/add-present/:partyid', (req, res) => AddPresentToParty(req, res));
 app.get('/getPresents/:partyid', (req, res) => GetAllPresents(req, res));
 app.put('/update-present/:partyid/:presentid', (req, res) => UpdatePresent(req, res));
+
 app.delete('/delete-present/:partyid/:presentid', (req, res) => DeletePresentFromParty(req, res)); */
 // Posts endpoints
 //app.post('/posts', (req, res) => CreatePost(req, res));

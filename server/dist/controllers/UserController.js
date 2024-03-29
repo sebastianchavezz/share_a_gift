@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CommitPicture = exports.GetPicture = exports.DeleteUser = exports.UpdateUser = exports.GetUser = exports.Register = exports.Login = void 0;
+exports.SearchUsers = exports.CommitPicture = exports.GetPicture = exports.DeleteUser = exports.UpdateUser = exports.GetUser = exports.Register = exports.Login = void 0;
 const UserModel_1 = require("../models/UserModel");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const userModel = new UserModel_1.UserModel();
@@ -114,3 +114,16 @@ const CommitPicture = async (req, res) => {
     }
 };
 exports.CommitPicture = CommitPicture;
+const SearchUsers = async (req, res) => {
+    try {
+        console.log('WE IN SEARCH');
+        const query = req.query.q; // Assuming the search query is provided as a query parameter
+        const users = await userModel.searchUsers(query);
+        res.status(200).json(users);
+    }
+    catch (error) {
+        console.error("Error searching users:", error);
+        res.status(500).send("Internal Server Error");
+    }
+};
+exports.SearchUsers = SearchUsers;
