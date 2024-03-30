@@ -2,70 +2,117 @@
 
 import { extname } from "path";
 import "reflect-metadata";
-import { Entity, PrimaryColumn, PrimaryGeneratedColumn, Column, BaseEntity, OneToMany, ManyToOne, JoinColumn, ManyToMany, JoinTable } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToMany, JoinTable, ManyToOne, JoinColumn, OneToMany} from 'typeorm';
 
 @Entity()
 class User extends BaseEntity {
-  @PrimaryGeneratedColumn({name:'userid'})
+  @PrimaryGeneratedColumn({ name: 'userid' })
   UserID!: number;
 
-  @Column({name:'naam', length: 50, nullable: true})
+  @Column({ name: 'naam', length: 50, nullable: true })
   Naam!: string;
 
-  @Column({name:'achterNaam', length: 50, nullable: true})
+  @Column({ name: 'achterNaam', length: 50, nullable: true })
   AchterNaam!: string;
 
-  @Column({name:'username', length: 50, unique: true, nullable: true })
+  @Column({ name: 'username', length: 50, unique: true, nullable: true })
   Username!: string;
 
-  @Column({name:'email', length: 100, unique: true })
+  @Column({ name: 'email', length: 100, unique: true })
   Email!: string;
 
-  @Column({name:'tel', length: 20, nullable: true})
+  @Column({ name: 'tel', length: 20, nullable: true })
   Tel!: string;
 
-  @Column({name:'parties', default: 0 })
+  @Column({ name: 'parties', default: 0 })
   Parties!: number;
 
-  @Column({name:'psswrd', length: 100, nullable: true })
+  @Column({ name: 'psswrd', length: 100, nullable: true })
   Psswrd!: string;
 
-  @Column({name: 'profilePicture', type:'bytea', nullable:true})
+  @Column({ name: 'profilePicture', type: 'bytea', nullable: true })
   ImageData: Buffer;
 
   @ManyToMany(() => Party, (party) => party.users)
   @JoinTable()
   parties!: Party[];
+
+  @ManyToMany(() => User, {
+    cascade: ['remove'],
+  })
+  @JoinTable({
+    name: 'user_friends',
+    joinColumn: {
+      name: 'user_id',
+      referencedColumnName: 'UserID',
+    },
+    inverseJoinColumn: {
+      name: 'friend_id',
+      referencedColumnName: 'UserID',
+    },
+  })
+  Friends: User[];
+
+  @OneToMany(() => FriendshipRequest, request => request.requester)
+  sentFriendshipRequests: FriendshipRequest[];
+
+  @OneToMany(() => FriendshipRequest, request => request.receiver)
+  receivedFriendshipRequests: FriendshipRequest[];
 }
 
-
 @Entity()
-class Party extends BaseEntity{
-  @PrimaryGeneratedColumn({name:'partyid'})
+class Party extends BaseEntity {
+  @PrimaryGeneratedColumn({ name: 'partyid' })
   PartyID: number;
 
-  @Column({name:'name', length: 255, nullable:true})
+  @Column({ name: 'name', length: 255, nullable: true })
   Name: string;
 
-  @Column({name:'occasion', length: 255 })
+  @Column({ name: 'occasion', length: 255 })
   Occasion: string;
 
-  @Column({name:'datestart'})
+  @Column({ name: 'datestart' })
   DateStart: Date;
 
-  @Column({name:'dateend'})
+  @Column({ name: 'dateend' })
   DateEnd: Date;
 
-  @Column({name:'description', length: 255, nullable: true })
+  @Column({ name: 'description', length: 255, nullable: true })
   Description: string;
 
-  @Column({name: 'image', type:'bytea', nullable:true})
+  @Column({ name: 'image', type: 'bytea', nullable: true })
   ImageData: Buffer;
 
   @ManyToMany(() => User, (user) => user.parties, {
-    cascade: true,
+    cascade: ['remove'],
   })
   users: User[];
+
+  @ManyToOne(() => User, user => user.parties, {
+    cascade: true, // Add cascade deletion
+  })
+  @JoinColumn({ name: 'creator_id' })
+  Creator: User;
+}
+
+@Entity()
+class FriendshipRequest extends BaseEntity {
+  @PrimaryGeneratedColumn({ name: 'request_id' })
+  requestID!: number;
+
+  @ManyToOne(() => User, user => user.sentFriendshipRequests)
+  @JoinColumn({ name: 'requester_id' })
+  requester: User;
+
+  @ManyToOne(() => User, user => user.receivedFriendshipRequests)
+  @JoinColumn({ name: 'receiver_id' })
+  receiver: User;
+
+  @Column({ default: 'pending' })
+  status: string; // pending, accepted, rejected
+
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  createdAt: Date;
 }
 
 /* 
@@ -240,5 +287,5 @@ class Friendship {
   user2: User;
 }
  */
-export { User, Party}
+export { User, Party, FriendshipRequest}
 

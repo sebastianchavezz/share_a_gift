@@ -57,6 +57,23 @@ __decorate([
     (0, typeorm_1.JoinTable)(),
     __metadata("design:type", Array)
 ], User.prototype, "parties", void 0);
+__decorate([
+    (0, typeorm_1.ManyToMany)(() => User, {
+        cascade: ['remove'],
+    }),
+    (0, typeorm_1.JoinTable)({
+        name: 'user_friends',
+        joinColumn: {
+            name: 'user_id',
+            referencedColumnName: 'UserID',
+        },
+        inverseJoinColumn: {
+            name: 'friend_id',
+            referencedColumnName: 'UserID',
+        },
+    }),
+    __metadata("design:type", Array)
+], User.prototype, "Friends", void 0);
 exports.User = User = __decorate([
     (0, typeorm_1.Entity)()
 ], User);
@@ -93,10 +110,17 @@ __decorate([
 ], Party.prototype, "ImageData", void 0);
 __decorate([
     (0, typeorm_1.ManyToMany)(() => User, (user) => user.parties, {
-        cascade: true,
+        cascade: ['remove'],
     }),
     __metadata("design:type", Array)
 ], Party.prototype, "users", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => User, user => user.parties, {
+        cascade: true, // Add cascade deletion
+    }),
+    (0, typeorm_1.JoinColumn)({ name: 'creator_id' }),
+    __metadata("design:type", User)
+], Party.prototype, "Creator", void 0);
 exports.Party = Party = __decorate([
     (0, typeorm_1.Entity)()
 ], Party);

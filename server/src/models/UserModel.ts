@@ -1,7 +1,8 @@
 //src/models/UserModel.ts
 import { getRepository, Repository } from 'typeorm';
-import { User } from '../db/Entities';
+import { User, FriendshipRequest } from '../db/Entities';
 import pool from '../db/db';
+import { tracingChannel } from 'diagnostics_channel';
 
 class UserModel {
     private userRepository: Repository<User>;
@@ -80,8 +81,36 @@ class UserModel {
           .where("user.Username LIKE :query OR user.Email LIKE :query", { query: `%${query}%` })
           .getMany();
         return users;
-      }
+    }
 
+    async requestFriendship(from: string, to: string): Promise<void>{
+        const id_sender = parseInt(from, 10);
+        const id_receiver = parseInt(to, 10);
+        const sender : User | null = await this.userRepository.findOne({where:{UserID:id_sender}});
+        const receiver : User | null = await this.userRepository.findOne({where:{UserID:id_receiver}});
+        
+        if(!sender || !receiver){
+            throw new Error('Sender or receiver not found');
+        }
+
+        const friendshipRepo = pool.getRepository(FriendshipRequest);
+        //TODO : uitlezen wat de status is en daarop logica schrijven
+        const existingRequest = await friendshipRepo.findOne({
+            where: {requester: sender, receiver: receiver}
+        })
+
+        if(existingRequest){
+            throw new Error('The status is pending. Geduld jong');
+        }
+
+        const newRequest = friendshipRepo.create({
+            requester: sender,
+            receiver: receiver,
+            status: 'pending'
+        });
+    
+        await friendshipRepo.save(newRequest);
+    }
 }
 
 export { UserModel };

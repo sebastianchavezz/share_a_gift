@@ -118,3 +118,12 @@ export const SearchUsers = async (req: Request, res: Response): Promise<void> =>
         res.status(500).send("Internal Server Error");
       }
 }
+
+export const RequestFriendship = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const from = req.params.userid;
+        const to = req.body.other_user;
+        
+      } catch (error) {
+      }
+}
