@@ -1,7 +1,7 @@
 // src/index.ts
 import  cors from 'cors';
 import express, { Request, Response} from 'express';
-import {GetUser, Login, Register, DeleteUser, UpdateUser, CommitPicture, GetPicture, SearchUsers, RequestFriendship} from './controllers/UserController';
+import {GetUser, Login, Register, DeleteUser, UpdateUser, CommitPicture, GetPicture, SearchUsers, RequestFriendship, GetFriendshipRequest, AcceptOrDeclineRequest} from './controllers/UserController';
 import {AddParty, AddUserToParty, GetParty, DeleteParty, UpdateParty, GetPartyByUser, UpdatePicture} from './controllers/PartyController';
 import { verifyToken } from './middleware/auth';
 import multer from 'multer';
@@ -34,7 +34,9 @@ app.get('/', (req, res) => {
 app.post('/login', (req, res) => Login(req, res));
 app.post('/register', (req, res) => Register(req, res));
 app.post('/upload-image/:userid',verifyToken, upload.single('image'),(req, res) => CommitPicture(req, res));
+app.get('/get-all-friendship-request/:userid', (req, res) => GetFriendshipRequest(req, res));
 app.post('/request-friendship/:userid',(req,res) => RequestFriendship(req, res));
+app.post('/status-of-friendship/:userid',(req,res) => AcceptOrDeclineRequest(req, res));
 app.get('/profile-image/:userid', verifyToken, (req, res) => GetPicture(req, res));
 app.get('/otherprofile-image/:userid', (req, res) => GetPicture(req, res));
 app.get('/get-user/:userid', verifyToken,(req, res) => GetUser(req, res));

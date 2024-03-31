@@ -123,7 +123,39 @@ export const RequestFriendship = async (req: Request, res: Response): Promise<vo
     try {
         const from = req.params.userid;
         const to = req.body.other_user;
-        
+        await userModel.requestFriendship(from, to);
+        res.status(200).send('Request pending');
       } catch (error) {
+        res.status(500).send('Internal Server Error');
       }
+}
+
+export const GetFriendshipRequest = async (req: Request, res: Response): Promise<void> => {
+    try{
+        const friendshiptRequest = await userModel.getFriendshipRequest(req.params.userid);
+        const user_request = friendshiptRequest.map(request => ({
+            userids : request.requester.UserID,
+            user_names : request.requester.Username
+        }));
+        console.log('Friendship query ', user_request);
+        if(user_request){
+            res.status(200).json(user_request);
+        }else{
+            res.status(404).send('Friendship Not found');
+        }
+    } catch (error){
+        res.status(500).send('Internal Server Error');
+    }
+}
+
+export const AcceptOrDeclineRequest = async (req: Request, res: Response): Promise<void> => {
+    try{
+        const userid = req.params.userid;
+        const otherid = req.body.other_user;
+        const status = req.body.status;
+        await userModel.acceptOrDeclineRequest(userid, otherid, status);
+        res.status(200).send('Request is either accepted or declined');
+    }catch (error){
+        res.status(500).send('Internal Server Error');
+    }
 }

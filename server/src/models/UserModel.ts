@@ -111,6 +111,52 @@ class UserModel {
     
         await friendshipRepo.save(newRequest);
     }
+
+    async getFriendshipRequest(userid: string): Promise<FriendshipRequest[]>{
+        const id = parseInt(userid, 10);
+        const user: User | null = await this.userRepository.findOne({where:{UserID: id}});
+
+        if(!user){
+            throw new Error('User not found ');
+        }
+
+        const friendshipRepo = pool.getRepository(FriendshipRequest);
+
+        const friendshipRequest = await friendshipRepo.find({ where: { receiver: user, status : 'pending' }});
+        
+        if (!friendshipRequest){
+            throw new Error('No Friendship request between this users');
+        }
+        return friendshipRequest;
+    }
+
+    async acceptOrDeclineRequest(userid: string, otherid: string, status: string): Promise<void>{
+        const id_sender = parseInt(userid, 10);
+        const id_receiver = parseInt(otherid, 10);
+        const sender : User | null = await this.userRepository.findOne({where:{UserID:id_sender}});
+        const receiver : User | null = await this.userRepository.findOne({where:{UserID:id_receiver}});
+        
+        if(!sender || !receiver){
+            throw new Error('Sender or receiver not found');
+        }
+
+        const friendshipRepo = pool.getRepository(FriendshipRequest);
+        //TODO : uitlezen wat de status is en daarop logica schrijven
+        const existingRequest = await friendshipRepo.findOne({
+            where: {requester: sender, receiver: receiver}
+        })
+
+        if(!existingRequest){
+            throw new Error('The status is gewoon Herres maat');
+        }
+        
+        if(existingRequest.status ===  "pending"){
+            throw new Error('The FRIENDSHIP was already accepted or deleted my n-word');
+        }
+
+        existingRequest.status = status;
+        await friendshipRepo.save(existingRequest);
+    }
 }
 
 export { UserModel };
