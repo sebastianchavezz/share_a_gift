@@ -10,7 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Party = exports.User = void 0;
+exports.Friendship = exports.FriendshipRequest = exports.Party = exports.User = void 0;
 require("reflect-metadata");
 const typeorm_1 = require("typeorm");
 let User = class User extends typeorm_1.BaseEntity {
@@ -58,22 +58,22 @@ __decorate([
     __metadata("design:type", Array)
 ], User.prototype, "parties", void 0);
 __decorate([
-    (0, typeorm_1.ManyToMany)(() => User, {
-        cascade: ['remove'],
-    }),
+    (0, typeorm_1.ManyToMany)(() => User, user => user.friends),
     (0, typeorm_1.JoinTable)({
-        name: 'user_friends',
-        joinColumn: {
-            name: 'user_id',
-            referencedColumnName: 'UserID',
-        },
-        inverseJoinColumn: {
-            name: 'friend_id',
-            referencedColumnName: 'UserID',
-        },
+        name: "friendship",
+        joinColumn: { name: "user_id" },
+        inverseJoinColumn: { name: "friend_id" }
     }),
     __metadata("design:type", Array)
-], User.prototype, "Friends", void 0);
+], User.prototype, "friends", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => FriendshipRequest, request => request.requester),
+    __metadata("design:type", Array)
+], User.prototype, "sentFriendshipRequests", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => FriendshipRequest, request => request.receiver),
+    __metadata("design:type", Array)
+], User.prototype, "receivedFriendshipRequests", void 0);
 exports.User = User = __decorate([
     (0, typeorm_1.Entity)()
 ], User);
@@ -124,3 +124,51 @@ __decorate([
 exports.Party = Party = __decorate([
     (0, typeorm_1.Entity)()
 ], Party);
+let Friendship = class Friendship extends typeorm_1.BaseEntity {
+};
+exports.Friendship = Friendship;
+__decorate([
+    (0, typeorm_1.PrimaryGeneratedColumn)({ name: 'friendship_id' }),
+    __metadata("design:type", Number)
+], Friendship.prototype, "friendshipID", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => User),
+    (0, typeorm_1.JoinColumn)({ name: 'user_id' }),
+    __metadata("design:type", User)
+], Friendship.prototype, "user", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => User),
+    (0, typeorm_1.JoinColumn)({ name: 'friend_id' }),
+    __metadata("design:type", User)
+], Friendship.prototype, "friend", void 0);
+exports.Friendship = Friendship = __decorate([
+    (0, typeorm_1.Entity)()
+], Friendship);
+let FriendshipRequest = class FriendshipRequest extends typeorm_1.BaseEntity {
+};
+exports.FriendshipRequest = FriendshipRequest;
+__decorate([
+    (0, typeorm_1.PrimaryGeneratedColumn)({ name: 'request_id' }),
+    __metadata("design:type", Number)
+], FriendshipRequest.prototype, "requestID", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => User, user => user.sentFriendshipRequests),
+    (0, typeorm_1.JoinColumn)({ name: 'requester_id' }),
+    __metadata("design:type", User)
+], FriendshipRequest.prototype, "requester", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => User, user => user.receivedFriendshipRequests),
+    (0, typeorm_1.JoinColumn)({ name: 'receiver_id' }),
+    __metadata("design:type", User)
+], FriendshipRequest.prototype, "receiver", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ default: 'pending' }),
+    __metadata("design:type", String)
+], FriendshipRequest.prototype, "status", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' }),
+    __metadata("design:type", Date)
+], FriendshipRequest.prototype, "createdAt", void 0);
+exports.FriendshipRequest = FriendshipRequest = __decorate([
+    (0, typeorm_1.Entity)()
+], FriendshipRequest);

@@ -3,6 +3,7 @@ import { getRepository, Repository } from 'typeorm';
 import { User, FriendshipRequest } from '../db/Entities';
 import pool from '../db/db';
 import { tracingChannel } from 'diagnostics_channel';
+import { send } from 'process';
 
 class UserModel {
     private userRepository: Repository<User>;
@@ -108,31 +109,37 @@ class UserModel {
             receiver: receiver,
             status: 'pending'
         });
-    
+        console.log('requester, ', newRequest.requester);
+        console.log('receiver, ', newRequest.receiver);
         await friendshipRepo.save(newRequest);
     }
 
-    async getFriendshipRequest(userid: string): Promise<FriendshipRequest[]>{
+    async getFriendshipRequest(userid: string): Promise<FriendshipRequest[]> {
         const id = parseInt(userid, 10);
         const user: User | null = await this.userRepository.findOne({where:{UserID: id}});
-
-        if(!user){
-            throw new Error('User not found ');
+    
+        if (!user) {
+            throw new Error('User not found');
         }
-
-        const friendshipRepo = pool.getRepository(FriendshipRequest);
-
-        const friendshipRequest = await friendshipRepo.find({ where: { receiver: user, status : 'pending' }});
-        
-        if (!friendshipRequest){
-            throw new Error('No Friendship request between this users');
+        console.log('User:', user);
+        const friendshipRequestRepo: Repository<FriendshipRequest> = pool.getRepository(FriendshipRequest);
+        const friendshipRequest: FriendshipRequest[] | null = await friendshipRequestRepo.find({
+            where: {
+                receiver: user,
+                status : 'pending'
+            },
+            relations : ['requester', 'receiver']
+        });
+        if (!friendshipRequest) {
+            throw new Error('No friendship request found for this user');
         }
+        console.log('Friendship Request:', friendshipRequest);
         return friendshipRequest;
     }
 
     async acceptOrDeclineRequest(userid: string, otherid: string, status: string): Promise<void>{
-        const id_sender = parseInt(userid, 10);
-        const id_receiver = parseInt(otherid, 10);
+        const id_sender = parseInt(otherid, 10);
+        const id_receiver = parseInt(userid, 10);
         const sender : User | null = await this.userRepository.findOne({where:{UserID:id_sender}});
         const receiver : User | null = await this.userRepository.findOne({where:{UserID:id_receiver}});
         
@@ -150,9 +157,9 @@ class UserModel {
             throw new Error('The status is gewoon Herres maat');
         }
         
-        if(existingRequest.status ===  "pending"){
+/*          if (existingRequest.status !== "pending") {
             throw new Error('The FRIENDSHIP was already accepted or deleted my n-word');
-        }
+        }  */
 
         existingRequest.status = status;
         await friendshipRepo.save(existingRequest);

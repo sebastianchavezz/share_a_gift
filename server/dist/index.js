@@ -39,6 +39,11 @@ app.get('/get-profile/:userid', (req, res) => (0, UserController_1.GetUser)(req,
 app.get('/search/users', async (req, res) => (0, UserController_1.SearchUsers)(req, res));
 app.put('/update-user/:userid', (req, res) => (0, UserController_1.UpdateUser)(req, res));
 app.delete('/delete-user/:userid', (req, res) => (0, UserController_1.DeleteUser)(req, res));
+//Friendship request
+app.get('/get-all-friendship-request/:userid', (req, res) => (0, UserController_1.GetFriendshipRequest)(req, res));
+app.post('/request-friendship/:userid', (req, res) => (0, UserController_1.RequestFriendship)(req, res));
+app.post('/status-of-friendship/:userid', (req, res) => (0, UserController_1.AcceptOrDeclineRequest)(req, res));
+app.get('/all-friends/:userid', (req, res) => (0, UserController_1.GetAllFriends)(req, res));
 // Party endpoints
 app.post('/add-party', auth_1.verifyToken, upload.single('image'), (req, res) => (0, PartyController_1.AddParty)(req, res));
 app.get('/get-party/:partyid', (req, res) => (0, PartyController_1.GetParty)(req, res));

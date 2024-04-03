@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SearchUsers = exports.CommitPicture = exports.GetPicture = exports.DeleteUser = exports.UpdateUser = exports.GetUser = exports.Register = exports.Login = void 0;
+exports.GetAllFriends = exports.AcceptOrDeclineRequest = exports.GetFriendshipRequest = exports.RequestFriendship = exports.SearchUsers = exports.CommitPicture = exports.GetPicture = exports.DeleteUser = exports.UpdateUser = exports.GetUser = exports.Register = exports.Login = void 0;
 const UserModel_1 = require("../models/UserModel");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const userModel = new UserModel_1.UserModel();
@@ -119,7 +119,12 @@ const SearchUsers = async (req, res) => {
         console.log('WE IN SEARCH');
         const query = req.query.q; // Assuming the search query is provided as a query parameter
         const users = await userModel.searchUsers(query);
-        res.status(200).json(users);
+        //just send the UserID and username
+        const data = users.map(user => ({
+            UserID: user.UserID,
+            Username: user.Username
+        }));
+        res.status(200).json(data);
     }
     catch (error) {
         console.error("Error searching users:", error);
@@ -127,3 +132,62 @@ const SearchUsers = async (req, res) => {
     }
 };
 exports.SearchUsers = SearchUsers;
+//Friendship AREA
+const RequestFriendship = async (req, res) => {
+    try {
+        const from = req.params.userid;
+        const to = req.body.other_user;
+        console.log('from:  ', from);
+        console.log('to:  ', to);
+        await userModel.requestFriendship(from, to);
+        res.status(200).send('Request pending');
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).send('Internal Server Error');
+    }
+};
+exports.RequestFriendship = RequestFriendship;
+const GetFriendshipRequest = async (req, res) => {
+    try {
+        const friendshipRequests = await userModel.getFriendshipRequest(req.params.userid);
+        // Map each friendship request to include requester and receiver details
+        const mappedRequests = friendshipRequests.map(request => ({
+            requestID: request.requestID,
+            requester_id: request.requester.UserID,
+            requester_Username: request.requester.Username,
+            status: request.status,
+            createdAt: request.createdAt
+        }));
+        res.status(200).json(mappedRequests);
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).send('Internal Server Error');
+    }
+};
+exports.GetFriendshipRequest = GetFriendshipRequest;
+const AcceptOrDeclineRequest = async (req, res) => {
+    try {
+        const userid = req.params.userid;
+        const otherid = req.body.other_user;
+        const status = req.body.status;
+        await userModel.acceptOrDeclineRequest(userid, otherid, status);
+        res.status(200).send('Request is either accepted or declined');
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).send('Internal Server Error');
+    }
+};
+exports.AcceptOrDeclineRequest = AcceptOrDeclineRequest;
+const GetAllFriends = async (req, res) => {
+    try {
+        const user = await userModel.getUserById(req.params.userid);
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).send('Internal Server Error');
+    }
+};
+exports.GetAllFriends = GetAllFriends;
