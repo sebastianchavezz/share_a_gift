@@ -48,9 +48,9 @@ app.get('/all-friends/:userid', (req, res) => (0, UserController_1.GetAllFriends
 app.post('/add-party', auth_1.verifyToken, upload.single('image'), (req, res) => (0, PartyController_1.AddParty)(req, res));
 app.get('/get-party/:partyid', (req, res) => (0, PartyController_1.GetParty)(req, res));
 app.post('/add-user/:partyid', (req, res) => (0, PartyController_1.AddUserToParty)(req, res));
-app.put('/update-party/:partyid', (req, res) => (0, PartyController_1.UpdateParty)(req, res));
+app.put('/update-party/:userid', (req, res) => (0, PartyController_1.UpdateParty)(req, res));
 app.post('/update-party-picture/:partyid', upload.single('image'), (req, res) => (0, PartyController_1.UpdatePicture)(req, res));
-app.delete('/delete-party/:partyid', (req, res) => (0, PartyController_1.DeleteParty)(req, res));
+app.delete('/delete-party/:userid', (req, res) => (0, PartyController_1.DeleteParty)(req, res));
 app.get('/getParty-by-user/:userid', (req, res) => (0, PartyController_1.GetPartyByUser)(req, res));
 // Present endpoints
 /* app.post('/add-present/:partyid', (req, res) => AddPresentToParty(req, res));

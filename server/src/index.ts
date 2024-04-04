@@ -51,9 +51,9 @@ app.get('/all-friends/:userid',(req, res) => GetAllFriends(req, res));
 app.post('/add-party',verifyToken, upload.single('image'),(req, res) => AddParty(req, res));
 app.get('/get-party/:partyid', (req, res) => GetParty(req, res));
 app.post('/add-user/:partyid', (req, res) => AddUserToParty(req, res));
-app.put('/update-party/:partyid', (req, res) => UpdateParty(req, res));
+app.put('/update-party/:userid', (req, res) => UpdateParty(req, res));
 app.post('/update-party-picture/:partyid', upload.single('image'),(req, res) => UpdatePicture(req, res));
-app.delete('/delete-party/:partyid', (req, res) => DeleteParty(req, res));
+app.delete('/delete-party/:userid', (req, res) => DeleteParty(req, res));
 app.get('/getParty-by-user/:userid',(req,res) => GetPartyByUser(req, res));
 
 // Present endpoints

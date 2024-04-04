@@ -118,7 +118,7 @@ __decorate([
 ], Party.prototype, "ImageData", void 0);
 __decorate([
     (0, typeorm_1.ManyToMany)(() => User, (user) => user.parties, {
-        cascade: ['remove'],
+        cascade: true,
     }),
     __metadata("design:type", Array)
 ], Party.prototype, "users", void 0);

@@ -84,7 +84,7 @@ class Party extends BaseEntity {
   ImageData: Buffer;
 
   @ManyToMany(() => User, (user) => user.parties, {
-    cascade: ['remove'],
+    cascade: true,
   })
   users: User[];
 

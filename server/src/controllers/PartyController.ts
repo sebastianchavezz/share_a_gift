@@ -84,7 +84,7 @@ export const AddUserToParty = async (req: Request, res: Response): Promise<void>
 
 export const UpdateParty = async (req: Request, res: Response): Promise<void> => {
     try {
-        await partyModel.updateParty(req.params.partyid, req.body);
+        await partyModel.updateParty(req.params.userid, req.body);
         res.status(200).send('Party updated Successfully');
     } catch (error) {
         console.error("Error updating party:", error);
@@ -94,8 +94,7 @@ export const UpdateParty = async (req: Request, res: Response): Promise<void> =>
 
 export const DeleteParty = async (req: Request, res: Response): Promise<void> => {
     try {
-        const partyId = parseInt(req.params.partyId); // Assuming partyId is passed in the request parameters
-        await partyModel.deleteParty(partyId);
+        await partyModel.deleteParty(req.params.userid, req.body.partyid);
         res.status(200).send('Party deleted Successfully');
     } catch (error) {
         console.error("Error deleting party:", error);
