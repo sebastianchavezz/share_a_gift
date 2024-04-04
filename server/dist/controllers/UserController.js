@@ -183,7 +183,12 @@ const AcceptOrDeclineRequest = async (req, res) => {
 exports.AcceptOrDeclineRequest = AcceptOrDeclineRequest;
 const GetAllFriends = async (req, res) => {
     try {
-        const user = await userModel.getUserById(req.params.userid);
+        const users = await userModel.getAllFriends(req.params.userid);
+        const data = users.map(user => ({
+            id: user.UserID,
+            username: user.Username
+        }));
+        res.status(200).json(data);
     }
     catch (error) {
         console.log(error);

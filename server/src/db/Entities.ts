@@ -47,11 +47,11 @@ class User extends BaseEntity {
       referencedColumnName: 'UserID',
     },
     inverseJoinColumn: {
-      name: 'friend_id',
-      referencedColumnName: 'UserID',
-    },
+    name: 'friend_id',
+    referencedColumnName: 'UserID',
+  },
   })
-  Friends: User[];
+  Friends!: User[];
 
   @OneToMany(() => FriendshipRequest, request => request.requester)
   sentFriendshipRequests: FriendshipRequest[];
@@ -115,6 +115,20 @@ class FriendshipRequest extends BaseEntity {
   createdAt: Date;
 }
 
+@Entity()
+class Friendship extends BaseEntity {
+  @PrimaryGeneratedColumn({ name: 'friendship_id' })
+  friendshipID!: number;
+
+  @ManyToOne(() => User, user => user.Friends)
+  @JoinColumn({ name: 'user_id' })
+  user: User;
+
+  @ManyToOne(() => User, user => user.Friends)
+  @JoinColumn({ name: 'friend_id' })
+  friend: User;
+
+}
 /* 
   @OneToMany(() => Present, present => present.party)
   presents: Present[]; */
@@ -287,5 +301,5 @@ class Friendship {
   user2: User;
 }
  */
-export { User, Party, FriendshipRequest}
+export { User, Party, Friendship, FriendshipRequest}
 

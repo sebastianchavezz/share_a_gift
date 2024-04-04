@@ -1,9 +1,7 @@
 //src/models/UserModel.ts
-import { getRepository, Repository } from 'typeorm';
-import { User, FriendshipRequest } from '../db/Entities';
+import { Repository } from 'typeorm';
+import { User, FriendshipRequest, Friendship } from '../db/Entities';
 import pool from '../db/db';
-import { tracingChannel } from 'diagnostics_channel';
-import { send } from 'process';
 
 class UserModel {
     private userRepository: Repository<User>;
@@ -93,6 +91,9 @@ class UserModel {
         if(!sender || !receiver){
             throw new Error('Sender or receiver not found');
         }
+        if(sender.UserID === receiver.UserID){
+            throw new Error('You cannot be friends with yourself mate!!');
+        }
 
         const friendshipRepo = pool.getRepository(FriendshipRequest);
         //TODO : uitlezen wat de status is en daarop logica schrijven
@@ -157,12 +158,60 @@ class UserModel {
             throw new Error('The status is gewoon Herres maat');
         }
         
-/*          if (existingRequest.status !== "pending") {
+        if (existingRequest.status !== "pending") {
             throw new Error('The FRIENDSHIP was already accepted or deleted my n-word');
-        }  */
-
+        }  
         existingRequest.status = status;
         await friendshipRepo.save(existingRequest);
+
+        if (status === "accepted") {
+            // Create a new friendship entry in the database
+            const friendship = new Friendship();
+            friendship.user = sender;
+            friendship.friend = receiver;
+            console.log('FRIENDSHIP: ', friendship);
+            await friendship.save();
+        }
+
+    }
+
+    async getAllFriends(userid: string): Promise<User[]>{
+        const id = parseInt(userid, 10);
+        const user = await this.userRepository.findOne({ where: { UserID: id } });
+    
+        if (!user) {
+            throw new Error('User not found');
+        }
+    
+        const friendshipRepo = pool.getRepository(Friendship);
+        const friendships = await friendshipRepo.find({
+            where: [{ user: user }, { friend: user }],
+            relations: ['user','friend'] // Include the 'friend' relation to retrieve the associated user
+        });
+    
+        if (!friendships || friendships.length === 0) {
+            console.log('User has no friends.');
+            throw new Error('Friendship not found mate');
+        }
+   
+        const friendIDs: number[] = [];
+        for (const friendship of friendships) {
+            if(friendship.friend.UserID === user.UserID){
+                friendIDs.push(friendship.user.UserID);
+            }else{
+                friendIDs.push(friendship.friend.UserID);
+            }
+        }
+        const users: User[] = []
+
+        for(const friendsID of friendIDs){
+            const temp_user = await this.userRepository.findOne({where:{UserID: friendsID}});
+            if(!temp_user){
+                throw new Error('NO USER');
+            }
+            users.push(temp_user);
+        }
+        return users;
     }
 }
 

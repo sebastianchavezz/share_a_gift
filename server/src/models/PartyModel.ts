@@ -13,7 +13,7 @@ class PartyModel {
     }
 
     async addParty(partyData: any, image: Buffer | null): Promise<void> {
-        const { userId, name,occasion, date, members } = partyData;
+        const { userId, name,occasion, date, description, creator, members } = partyData;
     
         // Find requesting user
         const requestingUser = await this.findUserById(userId);
@@ -21,13 +21,18 @@ class PartyModel {
             throw new Error('Requesting user not found');
         }
     
+        const user_creator = await this.userRepository.findOne({where:{UserID:parseInt(creator,10)}});
+        if(!user_creator){
+            throw new Error('No Creator found');
+        }
         // Create a new Party object
         const newParty = new Party();
         newParty.Occasion = occasion;
         newParty.Name = name,
         newParty.DateStart = date;
         newParty.DateEnd = date;
-        newParty.Description = '';
+        newParty.Creator = user_creator;
+        newParty.Description = description;
     
         // Add image data if provided
         if (image) {
@@ -65,6 +70,7 @@ class PartyModel {
         // Assign usersArray to newParty.users
         newParty.users = usersArray;
     
+        console.log('NEW PARTY: ', newParty);
         // Save the new party entity
         await this.partyRepository.save(newParty);
     }

@@ -84,6 +84,9 @@ class UserModel {
         if (!sender || !receiver) {
             throw new Error('Sender or receiver not found');
         }
+        if (sender.UserID === receiver.UserID) {
+            throw new Error('You cannot be friends with yourself mate!!');
+        }
         const friendshipRepo = db_1.default.getRepository(Entities_1.FriendshipRequest);
         //TODO : uitlezen wat de status is en daarop logica schrijven
         const existingRequest = await friendshipRepo.findOne({
@@ -138,11 +141,53 @@ class UserModel {
         if (!existingRequest) {
             throw new Error('The status is gewoon Herres maat');
         }
-        /*          if (existingRequest.status !== "pending") {
-                    throw new Error('The FRIENDSHIP was already accepted or deleted my n-word');
-                }  */
+        if (existingRequest.status !== "pending") {
+            throw new Error('The FRIENDSHIP was already accepted or deleted my n-word');
+        }
         existingRequest.status = status;
         await friendshipRepo.save(existingRequest);
+        if (status === "accepted") {
+            // Create a new friendship entry in the database
+            const friendship = new Entities_1.Friendship();
+            friendship.user = sender;
+            friendship.friend = receiver;
+            console.log('FRIENDSHIP: ', friendship);
+            await friendship.save();
+        }
+    }
+    async getAllFriends(userid) {
+        const id = parseInt(userid, 10);
+        const user = await this.userRepository.findOne({ where: { UserID: id } });
+        if (!user) {
+            throw new Error('User not found');
+        }
+        const friendshipRepo = db_1.default.getRepository(Entities_1.Friendship);
+        const friendships = await friendshipRepo.find({
+            where: [{ user: user }, { friend: user }],
+            relations: ['user', 'friend'] // Include the 'friend' relation to retrieve the associated user
+        });
+        if (!friendships || friendships.length === 0) {
+            console.log('User has no friends.');
+            throw new Error('Friendship not found mate');
+        }
+        const friendIDs = [];
+        for (const friendship of friendships) {
+            if (friendship.friend.UserID === user.UserID) {
+                friendIDs.push(friendship.user.UserID);
+            }
+            else {
+                friendIDs.push(friendship.friend.UserID);
+            }
+        }
+        const users = [];
+        for (const friendsID of friendIDs) {
+            const temp_user = await this.userRepository.findOne({ where: { UserID: friendsID } });
+            if (!temp_user) {
+                throw new Error('NO USER');
+            }
+            users.push(temp_user);
+        }
+        return users;
     }
 }
 exports.UserModel = UserModel;

@@ -173,7 +173,12 @@ export const AcceptOrDeclineRequest = async (req: Request, res: Response): Promi
 
 export const GetAllFriends = async(req: Request, res: Response): Promise<void> => {
     try{
-        const user = await userModel.getUserById(req.params.userid);
+        const users = await userModel.getAllFriends(req.params.userid);
+        const data = users.map(user => ({
+            id : user.UserID,
+            username: user.Username
+        }));
+        res.status(200).json(data)
     
     }catch (error){
         console.log(error);
