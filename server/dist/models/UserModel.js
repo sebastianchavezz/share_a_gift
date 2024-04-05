@@ -12,7 +12,6 @@ class UserModel {
     }
     async loginUser(username, password) {
         // Logic to find and validate user credentials (not implemented)
-        console.log('user inside the Login', username);
         const user = await this.userRepository.findOne({ where: { Username: username } });
         if (!user) {
             throw new Error("User not found");
@@ -26,7 +25,6 @@ class UserModel {
     async addUser(userData) {
         //TODO: check if email already in use
         const hashedPassword = userData.password;
-        console.log('userdata: ', userData);
         const newUser = this.userRepository.create({
             Username: userData.username, Email: userData.email,
             Naam: userData.naam, AchterNaam: userData.achterNaam,
@@ -37,7 +35,6 @@ class UserModel {
         await this.userRepository.save(newUser);
     }
     async getUserById(userid) {
-        console.log('userId inside Model', userid);
         console.log(typeof userid);
         const id = parseInt(userid, 10);
         const user = await this.userRepository.findOne({ where: { UserID: id } });
@@ -90,7 +87,8 @@ class UserModel {
         const friendshipRepo = db_1.default.getRepository(Entities_1.FriendshipRequest);
         //TODO : uitlezen wat de status is en daarop logica schrijven
         const existingRequest = await friendshipRepo.findOne({
-            where: { requester: sender, receiver: receiver }
+            where: { requester: sender, receiver: receiver },
+            relations: ['requester', 'receiver']
         });
         if (existingRequest) {
             throw new Error('The status is pending. Geduld jong');
@@ -100,8 +98,6 @@ class UserModel {
             receiver: receiver,
             status: 'pending'
         });
-        console.log('requester, ', newRequest.requester);
-        console.log('receiver, ', newRequest.receiver);
         await friendshipRepo.save(newRequest);
     }
     async getFriendshipRequest(userid) {
@@ -110,7 +106,6 @@ class UserModel {
         if (!user) {
             throw new Error('User not found');
         }
-        console.log('User:', user);
         const friendshipRequestRepo = db_1.default.getRepository(Entities_1.FriendshipRequest);
         const friendshipRequest = await friendshipRequestRepo.find({
             where: {
@@ -122,7 +117,6 @@ class UserModel {
         if (!friendshipRequest) {
             throw new Error('No friendship request found for this user');
         }
-        console.log('Friendship Request:', friendshipRequest);
         return friendshipRequest;
     }
     async acceptOrDeclineRequest(userid, otherid, status) {
@@ -151,7 +145,6 @@ class UserModel {
             const friendship = new Entities_1.Friendship();
             friendship.user = sender;
             friendship.friend = receiver;
-            console.log('FRIENDSHIP: ', friendship);
             await friendship.save();
         }
     }
@@ -167,7 +160,6 @@ class UserModel {
             relations: ['user', 'friend'] // Include the 'friend' relation to retrieve the associated user
         });
         if (!friendships || friendships.length === 0) {
-            console.log('User has no friends.');
             throw new Error('Friendship not found mate');
         }
         const friendIDs = [];

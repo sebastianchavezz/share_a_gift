@@ -1,22 +1,36 @@
-/* import { getRepository, Repository } from 'typeorm';
-import { Participants } from '../db/Entities'; // Assuming the entity for participants is named Participant
+import { getRepository, Repository } from 'typeorm';
+import { Participants, User, Conversations } from '../db/Entities'; // Assuming the entity for participants is named Participants
 import pool from '../db/db';
 
 class ParticipantModel {
-    private participantRepository: Repository<Participants>;
+    private participantsRepository: Repository<Participants>;
+    private userRepository: Repository<User>;
+    private conversationRepository: Repository<Conversations>;
 
     constructor() {
-        this.participantRepository = pool.getRepository(Participants);
+        this.participantsRepository = pool.getRepository(Participants);
+        this.userRepository = pool.getRepository(User);
+        this.conversationRepository = pool.getRepository(Conversations);
     }
 
     async addParticipantToConversation(conversationId: number, userId: number): Promise<void> {
-        // Logic to add a participant to a conversation (not implemented)
-    }
+        const user = await this.userRepository.findOne({where:{UserID:userId}});
+        if (!user) {
+            throw new Error('User not found');
+        }
 
-    async removeParticipantFromConversation(conversationId: number, userId: number): Promise<void> {
-        // Logic to remove a participant from a conversation (not implemented)
+        const conversation = await this.conversationRepository.findOne({where:{ConversationID: conversationId}});
+        if (!conversation) {
+            throw new Error('Conversation not found');
+        }
+
+        const participant = this.participantsRepository.create({
+            user,
+            conversation
+        });
+
+        await this.participantsRepository.save(participant);
     }
 }
 
 export { ParticipantModel };
- */

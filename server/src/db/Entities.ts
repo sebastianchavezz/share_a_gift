@@ -58,6 +58,15 @@ class User extends BaseEntity {
 
   @OneToMany(() => FriendshipRequest, request => request.receiver)
   receivedFriendshipRequests: FriendshipRequest[];
+
+  @OneToMany(() => Participants, participants => participants.user)
+  conversations: Participants[];
+
+  @OneToMany(() => Messages, messages => messages.sender)
+  sentMessages: Messages[];
+
+  @OneToMany(() => Messages, messages => messages.conversation)
+  receivedMessages: Messages[];
 }
 
 @Entity()
@@ -129,6 +138,59 @@ class Friendship extends BaseEntity {
   friend: User;
 
 }
+
+@Entity()
+class Conversations extends BaseEntity{
+  @PrimaryGeneratedColumn({name:'conversationsid'})
+  ConversationID: number;
+
+  @Column({name:'createdat', default: () => 'CURRENT_TIMESTAMP' })
+  CreatedAt: Date;
+
+  @Column({name:'lastmessageat', default: () => 'CURRENT_TIMESTAMP' })
+  LastMessageAt: Date;
+
+  @OneToMany(() => Participants, participants => participants.conversation)
+  participants: Participants[];
+
+  @OneToMany(() => Messages, messages => messages.conversation)
+  messages: Messages[];
+}
+  
+@Entity()
+class Participants extends BaseEntity{
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @ManyToOne(() => Conversations, conversation => conversation.participants)
+  @JoinColumn({ name: 'conversationId' })
+  conversation: Conversations;
+
+  @ManyToOne(() => User, user => user.conversations)
+  @JoinColumn({ name: 'userId' })
+  user: User;
+}
+
+@Entity()
+class Messages extends BaseEntity {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @ManyToOne(() => Conversations, conversation => conversation.messages, { onDelete: 'CASCADE' }) // Cascade deletion
+  @JoinColumn({ name: 'conversationId' })
+  conversation: Conversations;
+
+  @ManyToOne(() => User, user => user.sentMessages, { onDelete: 'CASCADE' }) // Cascade deletion
+  @JoinColumn({ name: 'senderId' })
+  sender: User;
+
+  @Column({ type: 'text' })
+  content: string;
+
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  timestamp: Date;
+}
+
 /* 
   @OneToMany(() => Present, present => present.party)
   presents: Present[]; */
@@ -230,58 +292,6 @@ class Comments{
 }
 
 @Entity()
-class Conversations{
-  @PrimaryGeneratedColumn({name:'conversationsid'})
-  ConversationID: number;
-
-  @Column({name:'createdat', default: () => 'CURRENT_TIMESTAMP' })
-  CreatedAt: Date;
-
-  @Column({name:'lastmessageat', default: () => 'CURRENT_TIMESTAMP' })
-  LastMessageAt: Date;
-
-  @OneToMany(() => Participants, participants => participants.conversation)
-  participants: Participants[];
-
-  @OneToMany(() => Messages, messages => messages.conversation)
-  messages: Messages[];
-}
-
-@Entity()
-class Participants {
-  @PrimaryGeneratedColumn()
-  id: number; // Add a primary column
-
-  @ManyToOne(() => Conversations, conversations => conversations.participants)
-  @JoinColumn({ name: 'conversationid' })
-  conversation: Conversations;
-
-  @ManyToOne(() => User, user => user.participants)
-  @JoinColumn({ name: 'userid' })
-  user: User;
-}
-
-@Entity()
-class Messages{
-  @PrimaryGeneratedColumn({name:'messageid'})
-  MessageID: number;
-
-  @ManyToOne(() => Conversations, conversations => conversations.messages)
-  @JoinColumn({ name: 'conversationid' })
-  conversation: Conversations;
-
-  @ManyToOne(() => User, user => user.messages)
-  @JoinColumn({ name: 'senderid' })
-  sender: User;
-
-  @Column({name:'content',type:'text'})
-  Content: string;
-
-  @Column({ default: () => 'CURRENT_TIMESTAMP' })
-  Timestamp: Date;
-}
-
-@Entity()
 class Friendship {
   @PrimaryGeneratedColumn({name:'friendshipid'})
   FriendshipID: number;
@@ -301,5 +311,5 @@ class Friendship {
   user2: User;
 }
  */
-export { User, Party, Friendship, FriendshipRequest}
+export { User, Party, Friendship, FriendshipRequest, Messages, Participants, Conversations}
 

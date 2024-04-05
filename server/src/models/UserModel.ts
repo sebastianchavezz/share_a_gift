@@ -12,7 +12,6 @@ class UserModel {
 
     async loginUser(username: string, password: string): Promise<User> {
         // Logic to find and validate user credentials (not implemented)
-        console.log('user inside the Login', username);
         const user = await this.userRepository.findOne({ where: { Username: username } });
         if (!user) {
             throw new Error("User not found");
@@ -27,7 +26,6 @@ class UserModel {
     async addUser(userData: any): Promise<void> {
         //TODO: check if email already in use
         const hashedPassword = userData.password;
-        console.log('userdata: ', userData);
         const newUser = this.userRepository.create({
             Username: userData.username, Email: userData.email,
             Naam: userData.naam, AchterNaam: userData.achterNaam,
@@ -39,7 +37,6 @@ class UserModel {
     }
 
     async getUserById(userid: string): Promise<User> {
-        console.log('userId inside Model', userid);
         console.log(typeof userid);
         const id = parseInt(userid,10);
         const user = await this.userRepository.findOne({where:{UserID: id}});    
@@ -98,7 +95,8 @@ class UserModel {
         const friendshipRepo = pool.getRepository(FriendshipRequest);
         //TODO : uitlezen wat de status is en daarop logica schrijven
         const existingRequest = await friendshipRepo.findOne({
-            where: {requester: sender, receiver: receiver}
+            where: {requester: sender, receiver: receiver},
+            relations: ['requester', 'receiver']
         })
 
         if(existingRequest){
@@ -110,8 +108,6 @@ class UserModel {
             receiver: receiver,
             status: 'pending'
         });
-        console.log('requester, ', newRequest.requester);
-        console.log('receiver, ', newRequest.receiver);
         await friendshipRepo.save(newRequest);
     }
 
@@ -122,7 +118,6 @@ class UserModel {
         if (!user) {
             throw new Error('User not found');
         }
-        console.log('User:', user);
         const friendshipRequestRepo: Repository<FriendshipRequest> = pool.getRepository(FriendshipRequest);
         const friendshipRequest: FriendshipRequest[] | null = await friendshipRequestRepo.find({
             where: {
@@ -134,7 +129,6 @@ class UserModel {
         if (!friendshipRequest) {
             throw new Error('No friendship request found for this user');
         }
-        console.log('Friendship Request:', friendshipRequest);
         return friendshipRequest;
     }
 
@@ -169,7 +163,6 @@ class UserModel {
             const friendship = new Friendship();
             friendship.user = sender;
             friendship.friend = receiver;
-            console.log('FRIENDSHIP: ', friendship);
             await friendship.save();
         }
 
@@ -190,7 +183,6 @@ class UserModel {
         });
     
         if (!friendships || friendships.length === 0) {
-            console.log('User has no friends.');
             throw new Error('Friendship not found mate');
         }
    

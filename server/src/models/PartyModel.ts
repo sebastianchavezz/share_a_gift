@@ -77,7 +77,6 @@ class PartyModel {
         // Assign usersArray to newParty.users
         newParty.users = usersArray;
     
-        console.log('NEW PARTY: ', newParty);
         // Save the new party entity
         await this.partyRepository.save(newParty);
     }
@@ -97,7 +96,6 @@ class PartyModel {
 
     async getPartyByUser(userIdInput: string): Promise<Party[]> {
         const userId = parseInt(userIdInput, 10);
-        console.log('getting the parties for user:', userId);
         
         // TODO: data validation inside the Controller Please
         if (isNaN(userId)) {
@@ -114,36 +112,61 @@ class PartyModel {
         return user.parties;
     }
     
-    async addUserToParty(partyId: number, userId: number): Promise<void> {
-        // Logic to add a user to a party (not implemented)
-    }
-
-    async updateParty(userid: string, updatedPartyData: any): Promise<void> {
-        // Parse partyId to integer
+    async addUserToParty(partyid: string, userid: string, otherid: string): Promise<void> {
         const u_id = parseInt(userid, 10);
-        const p_id = parseInt(updatedPartyData.partyid, 10);
+        const p_id = parseInt(partyid, 10);
+        const o_id = parseInt(otherid, 10);
     
-        // Find the party by ID
         const party = await this.partyRepository.findOne({
             where: { PartyID: p_id },
             relations: ['Creator', 'users']
         });
     
+        if (!party) 
+            throw new Error('No party with this ID');
+        if (u_id !== party.Creator.UserID) 
+            throw new Error('This user cannot update the Party');
+        const user = await this.userRepository.findOne({ where: { UserID: u_id } });
+        if (!user) 
+            throw new Error('User not found');
+        const other_user = await this.userRepository.findOne({ where: { UserID: o_id } });
+        if (!other_user) 
+            throw new Error('Other user not found');
+        // Ensure party.users is an array before operations
+        if (!party.users) 
+            party.users = [];
+        // Check if other_user is already in party
+        const isUserInParty = party.users.some(user => user.UserID === other_user.UserID);
+        if (isUserInParty) 
+            throw new Error('User already in party');
+        // Add other_user to party
+        party.users.push(other_user);
+        // Save the updated party
+        await this.partyRepository.save(party);
+    }
+    
+
+    async updateParty(userid: string, updatedPartyData: any): Promise<void> {
+        // Parse partyId to integer
+        const u_id = parseInt(userid, 10);
+        const p_id = parseInt(updatedPartyData.partyid, 10);
+        // Find the party by ID
+        const party = await this.partyRepository.findOne({
+            where: { PartyID: p_id },
+            relations: ['Creator', 'users']
+        });
         // If party not found, throw error
         if (!party) {
             throw new Error('No party with this ID');
         }
-    
         // Check whether the creator wants to update the party
         if (u_id !== party.Creator.UserID) {
             throw new Error('This user cannot update the Party');
         }
-    
         // Users that are in the PartyData and in the party Repo
         const union_users = await this.userRepository.find({
             where: { Username: In(updatedPartyData.users) }
         });
-    
         // Get all the users in the Party
         const users_in_party = party.users;
     
@@ -189,8 +212,6 @@ class PartyModel {
         const userId = parseInt(userid, 10);
         const partyId = parseInt(partyid, 10);
     
-        console.log('Party id:', partyId);
-        console.log('User id:', userId);
     
         const party = await this.partyRepository.findOne({
             where: { PartyID: partyId },
@@ -202,7 +223,6 @@ class PartyModel {
             throw new Error('Error: Party not found');
         }
     
-        console.log('Party:', party);
     
         if (userId !== party.Creator.UserID) {
             throw new Error('You may not delete this party, NOT AUTHORISED');
@@ -226,7 +246,6 @@ class PartyModel {
 
     async updatePicture(partyid: string, picture: any): Promise<void>{
         const id = parseInt(partyid, 10);
-        console.log('id: ', id);
         const party = await this.partyRepository.findOne({where: {PartyID: id}});
         if(!party){
             throw new Error('Party Not Found');

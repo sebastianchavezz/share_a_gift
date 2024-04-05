@@ -8,6 +8,7 @@ const cors_1 = __importDefault(require("cors"));
 const express_1 = __importDefault(require("express"));
 const UserController_1 = require("./controllers/UserController");
 const PartyController_1 = require("./controllers/PartyController");
+const ConversationController_1 = require("./controllers/ConversationController");
 const auth_1 = require("./middleware/auth");
 const multer_1 = __importDefault(require("multer"));
 //import session from 'express-session';
@@ -45,14 +46,18 @@ app.post('/request-friendship/:userid', (req, res) => (0, UserController_1.Reque
 app.post('/status-of-friendship/:userid', (req, res) => (0, UserController_1.AcceptOrDeclineRequest)(req, res));
 app.get('/all-friends/:userid', (req, res) => (0, UserController_1.GetAllFriends)(req, res));
 // Party endpoints
-app.post('/add-party', auth_1.verifyToken, upload.single('image'), (req, res) => (0, PartyController_1.AddParty)(req, res));
+app.post('/add-party', upload.single('image'), (req, res) => (0, PartyController_1.AddParty)(req, res));
 app.get('/get-party/:partyid', (req, res) => (0, PartyController_1.GetParty)(req, res));
-app.post('/add-user/:partyid', (req, res) => (0, PartyController_1.AddUserToParty)(req, res));
+app.post('/add-user-to-party/:userid', (req, res) => (0, PartyController_1.AddUserToParty)(req, res));
 app.put('/update-party/:userid', (req, res) => (0, PartyController_1.UpdateParty)(req, res));
 app.post('/update-party-picture/:partyid', upload.single('image'), (req, res) => (0, PartyController_1.UpdatePicture)(req, res));
 app.delete('/delete-party/:userid', (req, res) => (0, PartyController_1.DeleteParty)(req, res));
 app.get('/getParty-by-user/:userid', (req, res) => (0, PartyController_1.GetPartyByUser)(req, res));
+//// Conversations endpoints
+app.post('/conversations/:userid', (req, res) => (0, ConversationController_1.CreateConversation)(req, res));
 // Present endpoints
+//app.post('/conversations', (req, res) => CreateConversation(req, res));
+//app.get('/conversations/:conversationId', (req, res) => GetConversation(req, res));
 /* app.post('/add-present/:partyid', (req, res) => AddPresentToParty(req, res));
 app.get('/getPresents/:partyid', (req, res) => GetAllPresents(req, res));
 app.put('/update-present/:partyid/:presentid', (req, res) => UpdatePresent(req, res));
@@ -71,9 +76,6 @@ app.delete('/delete-present/:partyid/:presentid', (req, res) => DeletePresentFro
 //app.get('/posts/:postId/comments', (req, res) => GetComments(req, res));
 //app.put('/posts/:postId/comments/:commentId', (req, res) => UpdateComment(req, res));
 //app.delete('/posts/:postId/comments/:commentId', (req, res) => DeleteComment(req, res));
-//// Conversations endpoints
-//app.post('/conversations', (req, res) => CreateConversation(req, res));
-//app.get('/conversations/:conversationId', (req, res) => GetConversation(req, res));
 //// Participants endpoints
 //app.post('/conversations/:conversationId/participants', (req, res) => AddParticipant(req, res));
 //app.delete('/conversations/:conversationId/participants/:userId', (req, res) => RemoveParticipant(req, res));

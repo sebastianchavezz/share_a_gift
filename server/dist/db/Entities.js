@@ -10,7 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.FriendshipRequest = exports.Friendship = exports.Party = exports.User = void 0;
+exports.Conversations = exports.Participants = exports.Messages = exports.FriendshipRequest = exports.Friendship = exports.Party = exports.User = void 0;
 require("reflect-metadata");
 const typeorm_1 = require("typeorm");
 let User = class User extends typeorm_1.BaseEntity {
@@ -82,6 +82,18 @@ __decorate([
     (0, typeorm_1.OneToMany)(() => FriendshipRequest, request => request.receiver),
     __metadata("design:type", Array)
 ], User.prototype, "receivedFriendshipRequests", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => Participants, participants => participants.user),
+    __metadata("design:type", Array)
+], User.prototype, "conversations", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => Messages, messages => messages.sender),
+    __metadata("design:type", Array)
+], User.prototype, "sentMessages", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => Messages, messages => messages.conversation),
+    __metadata("design:type", Array)
+], User.prototype, "receivedMessages", void 0);
 exports.User = User = __decorate([
     (0, typeorm_1.Entity)()
 ], User);
@@ -180,3 +192,79 @@ __decorate([
 exports.Friendship = Friendship = __decorate([
     (0, typeorm_1.Entity)()
 ], Friendship);
+let Conversations = class Conversations extends typeorm_1.BaseEntity {
+};
+exports.Conversations = Conversations;
+__decorate([
+    (0, typeorm_1.PrimaryGeneratedColumn)({ name: 'conversationsid' }),
+    __metadata("design:type", Number)
+], Conversations.prototype, "ConversationID", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ name: 'createdat', default: () => 'CURRENT_TIMESTAMP' }),
+    __metadata("design:type", Date)
+], Conversations.prototype, "CreatedAt", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ name: 'lastmessageat', default: () => 'CURRENT_TIMESTAMP' }),
+    __metadata("design:type", Date)
+], Conversations.prototype, "LastMessageAt", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => Participants, participants => participants.conversation),
+    __metadata("design:type", Array)
+], Conversations.prototype, "participants", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => Messages, messages => messages.conversation),
+    __metadata("design:type", Array)
+], Conversations.prototype, "messages", void 0);
+exports.Conversations = Conversations = __decorate([
+    (0, typeorm_1.Entity)()
+], Conversations);
+let Participants = class Participants extends typeorm_1.BaseEntity {
+};
+exports.Participants = Participants;
+__decorate([
+    (0, typeorm_1.PrimaryGeneratedColumn)(),
+    __metadata("design:type", Number)
+], Participants.prototype, "id", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => Conversations, conversation => conversation.participants),
+    (0, typeorm_1.JoinColumn)({ name: 'conversationId' }),
+    __metadata("design:type", Conversations)
+], Participants.prototype, "conversation", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => User, user => user.conversations),
+    (0, typeorm_1.JoinColumn)({ name: 'userId' }),
+    __metadata("design:type", User)
+], Participants.prototype, "user", void 0);
+exports.Participants = Participants = __decorate([
+    (0, typeorm_1.Entity)()
+], Participants);
+let Messages = class Messages extends typeorm_1.BaseEntity {
+};
+exports.Messages = Messages;
+__decorate([
+    (0, typeorm_1.PrimaryGeneratedColumn)(),
+    __metadata("design:type", Number)
+], Messages.prototype, "id", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => Conversations, conversation => conversation.messages, { onDelete: 'CASCADE' }) // Cascade deletion
+    ,
+    (0, typeorm_1.JoinColumn)({ name: 'conversationId' }),
+    __metadata("design:type", Conversations)
+], Messages.prototype, "conversation", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => User, user => user.sentMessages, { onDelete: 'CASCADE' }) // Cascade deletion
+    ,
+    (0, typeorm_1.JoinColumn)({ name: 'senderId' }),
+    __metadata("design:type", User)
+], Messages.prototype, "sender", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'text' }),
+    __metadata("design:type", String)
+], Messages.prototype, "content", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' }),
+    __metadata("design:type", Date)
+], Messages.prototype, "timestamp", void 0);
+exports.Messages = Messages = __decorate([
+    (0, typeorm_1.Entity)()
+], Messages);

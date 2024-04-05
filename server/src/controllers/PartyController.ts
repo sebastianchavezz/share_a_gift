@@ -9,7 +9,6 @@ const partyModel = new PartyModel();
 //TODO: data validation in every CONTROLLERS
 export const AddParty = async (req: Request, res: Response): Promise<void> => {
     try {
-        console.log('body; ', req.body);
         const imageBuffer = req.file?.buffer;
         if(imageBuffer === undefined){
             await partyModel.addParty(req.body, null);
@@ -35,7 +34,8 @@ export const GetParty = async (req: Request, res: Response): Promise<void> => {
                 date : party.DateEnd,
                 image : party.ImageData,
                 description : party.Description,
-                members : partyMembers
+                members : partyMembers,
+                creator: party.Creator.Username
             }
             res.status(200).json(data);
         } else {
@@ -49,7 +49,6 @@ export const GetParty = async (req: Request, res: Response): Promise<void> => {
 
 export const GetPartyByUser = async (req: Request, res: Response): Promise<void> => {
     try {
-        console.log("request body input:", req.params.userid);
         const parties = await partyModel.getPartyByUser(req.params.userid);
         const parties_list = parties.map(party => ({
             partyid: party.PartyID,
@@ -58,7 +57,6 @@ export const GetPartyByUser = async (req: Request, res: Response): Promise<void>
             dateend: party.DateEnd
         }));
 
-        console.log('parties: ',parties_list);
         if (parties_list) {
             res.status(200).json(parties_list);
         } else {
@@ -72,9 +70,7 @@ export const GetPartyByUser = async (req: Request, res: Response): Promise<void>
 
 export const AddUserToParty = async (req: Request, res: Response): Promise<void> => {
     try {
-        const partyId = parseInt(req.params.partyId); // Assuming partyId is passed in the request parameters
-        const userId = parseInt(req.body.userId); // Assuming userId is passed in the request body
-        await partyModel.addUserToParty(partyId, userId);
+        await partyModel.addUserToParty(req.body.partyid, req.params.userid, req.body.other_userid);
         res.status(200).send('User added to Party Successfully');
     } catch (error) {
         console.error("Error adding user to party:", error);

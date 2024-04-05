@@ -9,7 +9,6 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const userModel = new UserModel_1.UserModel();
 const Login = async (req, res) => {
     try {
-        console.log('req: ', req.body);
         const { username, password } = req.body;
         const user = await userModel.loginUser(username, password);
         // Check if user is found and password matches
@@ -38,9 +37,7 @@ const Login = async (req, res) => {
 exports.Login = Login;
 const Register = async (req, res) => {
     try {
-        console.log('REGISTERING');
         await userModel.addUser(req.body);
-        console.log('Resgistration succesfull for user ', req.body.username);
         res.status(200).send('User registered Successfully');
     }
     catch (error) {
@@ -51,7 +48,6 @@ const Register = async (req, res) => {
 exports.Register = Register;
 const GetUser = async (req, res) => {
     try {
-        console.log('req.params', req.params.userid);
         const user = await userModel.getUserById(req.params.userid);
         if (user) {
             res.status(200).json({ 'naam': user.Naam, 'achternaam': user.AchterNaam, 'email': user.Email });
@@ -116,7 +112,6 @@ const CommitPicture = async (req, res) => {
 exports.CommitPicture = CommitPicture;
 const SearchUsers = async (req, res) => {
     try {
-        console.log('WE IN SEARCH');
         const query = req.query.q; // Assuming the search query is provided as a query parameter
         const users = await userModel.searchUsers(query);
         //just send the UserID and username
@@ -137,8 +132,6 @@ const RequestFriendship = async (req, res) => {
     try {
         const from = req.params.userid;
         const to = req.body.other_user;
-        console.log('from:  ', from);
-        console.log('to:  ', to);
         await userModel.requestFriendship(from, to);
         res.status(200).send('Request pending');
     }

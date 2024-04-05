@@ -7,7 +7,6 @@ const userModel = new UserModel();
 
 export const Login = async (req: Request, res: Response): Promise<void> => {
     try {
-        console.log('req: ',req.body);
         const { username, password } = req.body;
         
         const user = await userModel.loginUser(username, password);
@@ -36,9 +35,7 @@ export const Login = async (req: Request, res: Response): Promise<void> => {
 
 export const Register = async (req: Request, res: Response): Promise<void> => {
     try {
-        console.log('REGISTERING');
         await userModel.addUser(req.body);
-        console.log('Resgistration succesfull for user ', req.body.username);
         res.status(200).send('User registered Successfully');
     } catch (error) {
         console.error("Error registering user:", error);
@@ -48,7 +45,6 @@ export const Register = async (req: Request, res: Response): Promise<void> => {
 
 export const GetUser = async (req: Request, res: Response): Promise<void> => {
     try {
-        console.log('req.params', req.params.userid);
         const user = await userModel.getUserById(req.params.userid);
         if (user) {
             res.status(200).json({'naam':user.Naam,'achternaam':user.AchterNaam ,'email':user.Email});
@@ -107,7 +103,6 @@ export const CommitPicture = async (req: Request, res: Response): Promise<void> 
 
 export const SearchUsers = async (req: Request, res: Response): Promise<void> => {
     try {
-        console.log('WE IN SEARCH');
         const query = req.query.q; // Assuming the search query is provided as a query parameter
         const users = await userModel.searchUsers(query);
         //just send the UserID and username
@@ -128,8 +123,6 @@ export const RequestFriendship = async (req: Request, res: Response): Promise<vo
     try {
         const from = req.params.userid;
         const to = req.body.other_user;
-        console.log('from:  ', from);
-        console.log('to:  ', to);
         await userModel.requestFriendship(from, to);
         res.status(200).send('Request pending');
       } catch (error) {

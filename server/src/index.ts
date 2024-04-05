@@ -3,6 +3,7 @@ import  cors from 'cors';
 import express, { Request, Response} from 'express';
 import {GetUser, Login, Register, DeleteUser, UpdateUser, CommitPicture, GetPicture, SearchUsers, RequestFriendship, GetFriendshipRequest, AcceptOrDeclineRequest, GetAllFriends} from './controllers/UserController';
 import {AddParty, AddUserToParty, GetParty, DeleteParty, UpdateParty, GetPartyByUser, UpdatePicture} from './controllers/PartyController';
+import { CreateConversation } from './controllers/ConversationController';
 import { verifyToken } from './middleware/auth';
 import multer from 'multer';
 
@@ -48,15 +49,19 @@ app.post('/request-friendship/:userid',(req,res) => RequestFriendship(req, res))
 app.post('/status-of-friendship/:userid',(req,res) => AcceptOrDeclineRequest(req, res));
 app.get('/all-friends/:userid',(req, res) => GetAllFriends(req, res));
 // Party endpoints
-app.post('/add-party',verifyToken, upload.single('image'),(req, res) => AddParty(req, res));
+app.post('/add-party', upload.single('image'),(req, res) => AddParty(req, res));
 app.get('/get-party/:partyid', (req, res) => GetParty(req, res));
-app.post('/add-user/:partyid', (req, res) => AddUserToParty(req, res));
+app.post('/add-user-to-party/:userid', (req, res) => AddUserToParty(req, res));
 app.put('/update-party/:userid', (req, res) => UpdateParty(req, res));
 app.post('/update-party-picture/:partyid', upload.single('image'),(req, res) => UpdatePicture(req, res));
 app.delete('/delete-party/:userid', (req, res) => DeleteParty(req, res));
 app.get('/getParty-by-user/:userid',(req,res) => GetPartyByUser(req, res));
 
+//// Conversations endpoints
+app.post('/conversations/:userid', (req, res) => CreateConversation(req, res));
 // Present endpoints
+//app.post('/conversations', (req, res) => CreateConversation(req, res));
+//app.get('/conversations/:conversationId', (req, res) => GetConversation(req, res));
 /* app.post('/add-present/:partyid', (req, res) => AddPresentToParty(req, res));
 app.get('/getPresents/:partyid', (req, res) => GetAllPresents(req, res));
 app.put('/update-present/:partyid/:presentid', (req, res) => UpdatePresent(req, res));
@@ -78,9 +83,6 @@ app.delete('/delete-present/:partyid/:presentid', (req, res) => DeletePresentFro
 //app.put('/posts/:postId/comments/:commentId', (req, res) => UpdateComment(req, res));
 //app.delete('/posts/:postId/comments/:commentId', (req, res) => DeleteComment(req, res));
 
-//// Conversations endpoints
-//app.post('/conversations', (req, res) => CreateConversation(req, res));
-//app.get('/conversations/:conversationId', (req, res) => GetConversation(req, res));
 
 //// Participants endpoints
 //app.post('/conversations/:conversationId/participants', (req, res) => AddParticipant(req, res));
