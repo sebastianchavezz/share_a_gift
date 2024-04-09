@@ -9,6 +9,7 @@ const express_1 = __importDefault(require("express"));
 const UserController_1 = require("./controllers/UserController");
 const PartyController_1 = require("./controllers/PartyController");
 const ConversationController_1 = require("./controllers/ConversationController");
+const MessageController_1 = require("./controllers/MessageController");
 const auth_1 = require("./middleware/auth");
 const multer_1 = __importDefault(require("multer"));
 //import session from 'express-session';
@@ -55,6 +56,10 @@ app.delete('/delete-party/:userid', (req, res) => (0, PartyController_1.DeletePa
 app.get('/getParty-by-user/:userid', (req, res) => (0, PartyController_1.GetPartyByUser)(req, res));
 //// Conversations endpoints
 app.post('/conversations/:userid', (req, res) => (0, ConversationController_1.CreateConversation)(req, res));
+app.get('/all-conversations-by-user/:userid', (req, res) => (0, ConversationController_1.GetAllConversationsByUser)(req, res));
+//// Messages endpoints
+app.post('/message/', (req, res) => (0, MessageController_1.SendMessage)(req, res));
+app.get('/message-between-users/', (req, res) => (0, MessageController_1.GetMessagesBetweenUsers)(req, res));
 // Present endpoints
 //app.post('/conversations', (req, res) => CreateConversation(req, res));
 //app.get('/conversations/:conversationId', (req, res) => GetConversation(req, res));
@@ -79,9 +84,6 @@ app.delete('/delete-present/:partyid/:presentid', (req, res) => DeletePresentFro
 //// Participants endpoints
 //app.post('/conversations/:conversationId/participants', (req, res) => AddParticipant(req, res));
 //app.delete('/conversations/:conversationId/participants/:userId', (req, res) => RemoveParticipant(req, res));
-//// Messages endpoints
-//app.post('/conversations/:conversationId/messages', (req, res) => SendMessage(req, res));
-//app.get('/conversations/:conversationId/messages', (req, res) => GetMessages(req, res));
 app.use(express_1.default.json());
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);

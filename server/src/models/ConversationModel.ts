@@ -12,6 +12,19 @@ class ConversationModel {
         this.participantsRepository = pool.getRepository(Participants);
         this.userRepository = pool.getRepository(User);
     }
+    async getAllConversationsByUser(userId: string): Promise<Conversations[]>{
+        const id  = parseInt(userId, 10);
+        const user = await this.userRepository.findOne({where: {UserID: id}});
+        if(!user) throw new Error('User not found');
+
+        const conversation = await this.conversationRepository.find({
+            relations :['participants'],
+            where: {
+                participants: [{user}]
+            }
+        });
+        return conversation;
+    }
 
     async createConversation(user1Id_string: string, user2Id_string: string): Promise<number> {
         // Check if a conversation already exists between the two users

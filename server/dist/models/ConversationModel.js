@@ -12,6 +12,19 @@ class ConversationModel {
         this.participantsRepository = db_1.default.getRepository(Entities_1.Participants);
         this.userRepository = db_1.default.getRepository(Entities_1.User);
     }
+    async getAllConversationsByUser(userId) {
+        const id = parseInt(userId, 10);
+        const user = await this.userRepository.findOne({ where: { UserID: id } });
+        if (!user)
+            throw new Error('User not found');
+        const conversation = await this.conversationRepository.find({
+            relations: ['participants'],
+            where: {
+                participants: [{ user }]
+            }
+        });
+        return conversation;
+    }
     async createConversation(user1Id_string, user2Id_string) {
         // Check if a conversation already exists between the two users
         const existingConversation = await this.getConversationByUsers(user1Id_string, user2Id_string);

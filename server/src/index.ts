@@ -3,7 +3,8 @@ import  cors from 'cors';
 import express, { Request, Response} from 'express';
 import {GetUser, Login, Register, DeleteUser, UpdateUser, CommitPicture, GetPicture, SearchUsers, RequestFriendship, GetFriendshipRequest, AcceptOrDeclineRequest, GetAllFriends} from './controllers/UserController';
 import {AddParty, AddUserToParty, GetParty, DeleteParty, UpdateParty, GetPartyByUser, UpdatePicture} from './controllers/PartyController';
-import { CreateConversation } from './controllers/ConversationController';
+import { CreateConversation, GetAllConversationsByUser } from './controllers/ConversationController';
+import { GetMessagesBetweenUsers, SendMessage } from './controllers/MessageController';
 import { verifyToken } from './middleware/auth';
 import multer from 'multer';
 
@@ -59,6 +60,12 @@ app.get('/getParty-by-user/:userid',(req,res) => GetPartyByUser(req, res));
 
 //// Conversations endpoints
 app.post('/conversations/:userid', (req, res) => CreateConversation(req, res));
+app.get('/all-conversations-by-user/:userid', (req, res) => GetAllConversationsByUser(req, res));
+
+//// Messages endpoints
+app.post('/message/', (req, res) => SendMessage(req, res));
+app.get('/message-between-users/', (req, res) => GetMessagesBetweenUsers(req, res));
+
 // Present endpoints
 //app.post('/conversations', (req, res) => CreateConversation(req, res));
 //app.get('/conversations/:conversationId', (req, res) => GetConversation(req, res));
@@ -88,9 +95,6 @@ app.delete('/delete-present/:partyid/:presentid', (req, res) => DeletePresentFro
 //app.post('/conversations/:conversationId/participants', (req, res) => AddParticipant(req, res));
 //app.delete('/conversations/:conversationId/participants/:userId', (req, res) => RemoveParticipant(req, res));
 
-//// Messages endpoints
-//app.post('/conversations/:conversationId/messages', (req, res) => SendMessage(req, res));
-//app.get('/conversations/:conversationId/messages', (req, res) => GetMessages(req, res));
 
 app.use(express.json());
 app.listen(port, () => {

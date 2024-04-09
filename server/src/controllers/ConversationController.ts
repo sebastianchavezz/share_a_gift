@@ -15,6 +15,17 @@ export const CreateConversation = async (req: Request, res: Response): Promise<v
     }
 };
 
+export const GetAllConversationsByUser = async (req:Request, res: Response): Promise<void> => {
+    try {
+        const user = req.params.userid;
+        const conversations =await conversationModel.getAllConversationsByUser(user);
+        res.status(200).send(conversations);
+    } catch (error){
+        console.error("ERROR: ",error);
+        res.status(500).send("Internal Server Error");
+    }
+};
+
 export const deleteConversation = async (req: Request, res: Response): Promise<void> => {
     try {
         const conversationId = parseInt(req.params.conversationId); // Assuming conversationId is passed in the request parameters
